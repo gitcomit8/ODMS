@@ -1,10 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Pending Requests</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .actions form {
+            display: inline;
+        }
+
+        .actions button {
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .approve-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+
+        .reject-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+        }
+    </style>
 </head>
 <body>
-$END$
+<h1>Pending OD Requests for Approval</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Event Name</th>
+        <th>Event Date</th>
+        <th>Participant Count</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${requests.isEmpty()}">
+        <td colspan="4">No pending requests found.</td>
+    </tr>
+    <tr th:each="request : ${requests}">
+        <td th:text="${request.eventName}">Hackathon</td>
+        <td th:text="${#temporals.format(request.eventDate, 'dd-MMM-yyyy')}">17-Sep-2025</td>
+        <td th:text="${#lists.size(request.participants)}">15</td>
+        <td class="actions">
+            <form method="post" th:action="@{/event-requests/approve/{id}(id=${request.id})}">
+                <button class="approve-btn" type="submit">Approve</button>
+            </form>
+
+            <form method="post" th:action="@{/event-requests/reject/{id}(id=${request.id})}">
+                <button class="reject-btn" type="submit">Reject</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

@@ -8,10 +8,7 @@ import in.srmup.odms.repository.EventRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,5 +47,35 @@ public class EventRequestController {
         List<EventRequest> requests = eventRequestRepository.findAllByOrderByIdDesc();
         model.addAttribute("requests", requests);
         return "my-requests";
+    }
+
+    @GetMapping("/pending")
+    public String showPendingRequests(Model model) {
+        List<EventRequest> pendingRequests = eventRequestRepository.findByStatus(RequestStatus.SUBMITTED);
+        model.addAttribute("requests", pendingRequests);
+        return "pending-requests";
+    }
+
+    @PostMapping("/approve/{id}")
+    public String approveRequest(@PathVariable("id") Long id) {
+
+
+        eventRequestRepository.findById(id).ifPresent(request -> {
+            request.setStatus(RequestStatus.PENDING_WELFARE_APPROVAL); // Next step in the chain
+            eventRequestRepository.save(request);
+        });
+
+        return "redirect:/event-requests/pending";
+    }
+
+    @PostMapping("/reject/{id}")
+    public String rejectRequest(@PathVariable("id") Long id) {
+
+        eventRequestRepository.findById(id).ifPresent(request -> {
+            request.setStatus(RequestStatus.REJECTED);
+            eventRequestRepository.save(request);
+        });
+
+        return "redirect:/event-requests/pending";
     }
 }
