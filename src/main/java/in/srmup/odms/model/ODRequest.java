@@ -1,5 +1,7 @@
 package in.srmup.odms.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -97,7 +99,7 @@ public class ODRequest {
         this.section = section;
     }
 
-    public String ring getDepartment() {
+    public String getDepartment() {
         return department;
     }
 

@@ -1,10 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>New On-Duty Request</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 150px 300px;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, button {
+            padding: 8px;
+        }
+
+        button {
+            grid-column: 2;
+            width: 100px;
+        }
+    </style>
 </head>
 <body>
+<h1>Submit On-Duty Request</h1>
+<form action="#" method="post" th:action="@{/od-requests/submit}" th:object="${odRequest}">
+    <label for="applicantName">Full Name:</label>
+    <input id="applicantName" required th:field="*{applicantName}" type="text">
 
+    <label for="registrationNumber">Registration No:</label>
+    <input id="registrationNumber" required th:field="*{registrationNumber}" type="text">
+
+    <label for="eventName">Event Name:</label>
+    <input id="eventName" required th:field="*{eventName}" type="text">
+
+    <label for="eventDate">Event Date:</label>
+    <input id="eventDate" required th:field="*{eventDate}" type="date">
+
+    <label for="fromTime">From Time:</label>
+    <input id="fromTime" required th:field="*{fromTime}" type="time">
+
+    <label for="toTime">To Time:</label>
+    <input id="toTime" required th:field="*{toTime}" type="time">
+
+    <label for="academicYear">Year:</label>
+    <input id="academicYear" required th:field="*{academicYear}" type="number">
+
+    <label for="branch">Branch:</label>
+    <input id="branch" required th:field="*{branch}" type="text">
+
+    <label for="section">Section:</label>
+    <input id="section" required th:field="*{section}" type="text">
+
+    <label for="department">Department:</label>
+    <input id="department" required th:field="*{department}" type="text">
+
+    <button type="submit">Submit</button>
+</form>
 </body>
 </html>
