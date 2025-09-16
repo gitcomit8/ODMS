@@ -1,10 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+    <meta charset="UTF-8">
+    <title>My Submitted Requests</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .status-SUBMITTED {
+            color: #ffa500;
+        }
+
+        /* Orange */
+        .status-APPROVED {
+            color: #28a745;
+        }
+
+        /* Green */
+        .status-REJECTED {
+            color: #dc3545;
+        }
+
+        /* Red */
+    </style>
 </head>
 <body>
-
+<h1>My Submitted Requests</h1>
+<p><a href="/event-requests/new">Submit a New Request</a></p>
+<table>
+    <thead>
+    <tr>
+        <th>Event Name</th>
+        <th>Event Date</th>
+        <th>Participant Count</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="request : ${requests}">
+        <td th:text="${request.eventName}">Hackathon</td>
+        <td th:text="${#temporals.format(request.eventDate, 'dd-MMM-yyyy')}">25-Jul-2025</td>
+        <td th:text="${#lists.size(request.participants)}">15</td>
+        <td>
+					<span class="status"
+                          th:classappend="|status-${request.status}|"
+                          th:text="${request.status}">SUBMITTED</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

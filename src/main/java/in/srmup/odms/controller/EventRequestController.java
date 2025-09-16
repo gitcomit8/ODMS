@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/event-requests")
 public class EventRequestController {
@@ -41,5 +43,12 @@ public class EventRequestController {
     @GetMapping("/success")
     public String showSuccessPage() {
         return "success-page";
+    }
+
+    @GetMapping("/my-requests")
+    public String showMyRequests(Model model) {
+        List<EventRequest> requests = eventRequestRepository.findAllByOrderByIdDesc();
+        model.addAttribute("requests", requests);
+        return "my-requests";
     }
 }
