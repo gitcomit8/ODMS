@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New Event OD Request</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+        }
+
+        .container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .event-details {
+            display: grid;
+            grid-template-columns: 150px 300px;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input {
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .actions {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>Submit OD Request for an Event</h1>
+
+<form action="#" class="container" method="post" th:action="@{/event-requests/submit}" th:object="${eventRequest}">
+    <fieldset>
+        <legend><h3>Event Details</h3></legend>
+        <div class="event-details">
+            <label for="eventName">Event Name:</label>
+            <input id="eventName" required th:field="*{eventName}" type="text">
+
+            <label for="eventDate">Event Date:</label>
+            <input id="eventDate" required th:field="*{eventDate}" type="date">
+
+            <label for="fromTime">From Time:</label>
+            <input id="fromTime" required th:field="*{fromTime}" type="time">
+
+            <label for="toTime">To Time:</label>
+            <input id="toTime" required th:field="*{toTime}" type="time">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend><h3>Participants</h3></legend>
+        <table id="participantTable">
+            <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Registration No</th>
+                <th>Year</th>
+                <th>Branch</th>
+                <th>Section</th>
+                <th>Department</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="participant, itemStat : *{participants}">
+                <td><input required th:field="*{participants[__${itemStat.index}__].name}" type="text"/></td>
+                <td><input required th:field="*{participants[__${itemStat.index}__].regNo}" type="text"/>
+                </td>
+                <td><input required th:field="*{participants[__${itemStat.index}__].academicYr}" type="number"/></td>
+                <td><input required th:field="*{participants[__${itemStat.index}__].branch}" type="text"/></td>
+                <td><input required th:field="*{participants[__${itemStat.index}__].section}" type="text"/></td>
+                <td><input required th:field="*{participants[__${itemStat.index}__].department}" type="text"/></td>
+                <td>
+                    <button onclick="removeRow(this)" type="button">Remove</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="actions">
+            <button onclick="addRow()" type="button">Add Participant</button>
+        </div>
+    </fieldset>
+
+    <button type="submit">Submit Entire Request</button>
+</form>
+
+<script>
+    function addRow() {
+        const table = document.getElementById('participantTable').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        const newIndex = table.rows.length - 1;
+
+        newRow.innerHTML = `
+				<td><input type="text" name="participants[${newIndex}].name" required /></td>
+				<td><input type="text" name="participants[${newIndex}].registrationNumber" required /></td>
+				<td><input type="number" name="participants[${newIndex}].academicYear" required /></td>
+				<td><input type="text" name="participants[${newIndex}].branch" required /></td>
+				<td><input type="text" name="participants[${newIndex}].section" required /></td>
+				<td><input type="text" name="participants[${newIndex}].department" required /></td>
+				<td><button type="button" onclick="removeRow(this)">Remove</button></td>
+			`;
+    }
+
+    function removeRow(button) {
+        // Do not remove the last row
+        if (document.getElementById('participantTable').getElementsByTagName('tbody')[0].rows.length > 1) {
+            button.closest('tr').remove();
+        } else {
+            alert("At least one participant is required.");
+        }
+    }
+</script>
+</body>
+</html>

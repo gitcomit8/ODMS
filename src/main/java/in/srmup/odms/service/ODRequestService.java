@@ -1,5 +1,6 @@
 package in.srmup.odms.service;
 
+import in.srmup.odms.model.EventRequest;
 import in.srmup.odms.model.RequestStatus;
 import in.srmup.odms.repository.EventRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class ODRequestService {
      * @param odRequest
      * @return
      */
-    public ODRequest createOdRequest(ODRequest odRequest) {
+    public EventRequest createOdRequest(EventRequest odRequest) {
         //Set an initial status for all new requests
         odRequest.setStatus(RequestStatus.SUBMITTED);
 
