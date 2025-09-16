@@ -18,6 +18,7 @@ public class ODRequest {
     private String eventName;
     private LocalDate eventDate;
     private LocalTime fromTime;
+    private LocalTime toTime;
     private Integer academicYear;
     private String branch;
     private String section;
@@ -73,6 +74,14 @@ public class ODRequest {
 
     public void setFromTime(LocalTime fromTime) {
         this.fromTime = fromTime;
+    }
+
+    public LocalTime getToTime() {
+        return toTime;
+    }
+
+    public void setToTime(LocalTime toTime) {
+        this.toTime = toTime;
     }
 
     public Integer getAcademicYear() {
