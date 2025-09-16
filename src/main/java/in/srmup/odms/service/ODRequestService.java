@@ -1,18 +1,17 @@
 package in.srmup.odms.service;
 
-import in.srmup.odms.model.ODRequest;
 import in.srmup.odms.model.RequestStatus;
-import in.srmup.odms.repository.ODRequestRepository;
+import in.srmup.odms.repository.EventRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ODRequestService {
-    private final ODRequestRepository odRequestRepository;
+    private final EventRequestRepository eventRequestRepository;
 
     @Autowired
-    public ODRequestService(ODRequestRepository odRequestRepository) {
-        this.odRequestRepository = odRequestRepository;
+    public ODRequestService(EventRequestRepository eventRequestRepository) {
+        this.eventRequestRepository = eventRequestRepository;
     }
 
     /**
@@ -26,6 +25,6 @@ public class ODRequestService {
         odRequest.setStatus(RequestStatus.SUBMITTED);
 
         //Save request to db using repo
-        return odRequestRepository.save(odRequest);
+        return eventRequestRepository.save(odRequest);
     }
 }

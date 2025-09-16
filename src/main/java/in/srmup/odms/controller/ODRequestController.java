@@ -1,6 +1,5 @@
 package in.srmup.odms.controller;
 
-import in.srmup.odms.model.ODRequest;
 import in.srmup.odms.service.ODRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
