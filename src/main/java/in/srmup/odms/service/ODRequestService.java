@@ -16,8 +16,8 @@ public class ODRequestService {
     /**
      * Creates a new OD request.
      *
-     * @param odRequest The request object to be saved.
-     * @return The saved request with its generated ID and initial status.
+     * @param odRequest
+     * @return
      */
     public ODRequest createOdRequest(ODRequest odRequest) {
         //Set initial status for all new requests
