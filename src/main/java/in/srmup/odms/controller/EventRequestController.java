@@ -5,6 +5,7 @@ import in.srmup.odms.model.EventRequest;
 import in.srmup.odms.model.Participant;
 import in.srmup.odms.model.RequestStatus;
 import in.srmup.odms.repository.EventRequestRepository;
+import in.srmup.odms.service.EventRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/event-requests")
 public class EventRequestController {
+
+    @Autowired
+    private EventRequestService eventRequestService;
 
     @Autowired
     private EventRequestRepository eventRequestRepository;
@@ -58,24 +62,13 @@ public class EventRequestController {
 
     @PostMapping("/approve/{id}")
     public String approveRequest(@PathVariable("id") Long id) {
-
-
-        eventRequestRepository.findById(id).ifPresent(request -> {
-            request.setStatus(RequestStatus.PENDING_WELFARE_APPROVAL); // Next step in the chain
-            eventRequestRepository.save(request);
-        });
-
+        eventRequestService.approveRequest(id); // Call the service
         return "redirect:/event-requests/pending";
     }
 
     @PostMapping("/reject/{id}")
     public String rejectRequest(@PathVariable("id") Long id) {
-
-        eventRequestRepository.findById(id).ifPresent(request -> {
-            request.setStatus(RequestStatus.REJECTED);
-            eventRequestRepository.save(request);
-        });
-
+        eventRequestService.rejectRequest(id); // Call the service
         return "redirect:/event-requests/pending";
     }
 }
