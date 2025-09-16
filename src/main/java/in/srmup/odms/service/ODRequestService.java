@@ -3,6 +3,8 @@ package in.srmup.odms.service;
 import in.srmup.odms.model.ODRequest;
 import in.srmup.odms.model.RequestStatus;
 import in.srmup.odms.repository.ODRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ODRequestService {
@@ -20,7 +22,7 @@ public class ODRequestService {
      * @return
      */
     public ODRequest createOdRequest(ODRequest odRequest) {
-        //Set initial status for all new requests
+        //Set an initial status for all new requests
         odRequest.setStatus(RequestStatus.SUBMITTED);
 
         //Save request to db using repo
