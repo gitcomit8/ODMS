@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Service
 public class EventRequestService {
 
@@ -36,6 +38,7 @@ public class EventRequestService {
             request.setStatus(RequestStatus.PENDING_HOD_APPROVAL);
         } else if ("ROLE_HOD".equals(approverRole) && request.getStatus() == RequestStatus.PENDING_HOD_APPROVAL) {
             request.setStatus(RequestStatus.APPROVED);
+            request.setApprovedDate(LocalDate.now());
             incrementOdLeaveCounts(request);
         } else {
             throw new IllegalStateException("User does not have permission to approve this request at its current stage.");

@@ -17,16 +17,24 @@ public class EventRequest {
     private LocalDate eventDate;
     private LocalTime fromTime;
     private LocalTime toTime;
+    private LocalDate approvedDate;
 
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
-
     @OneToMany(
             mappedBy = "eventRequest",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<Participant> participants = new ArrayList<>();
+
+    public LocalDate getApprovedDate() {
+        return approvedDate;
+    }
+
+    public void setApprovedDate(LocalDate approvedDate) {
+        this.approvedDate = approvedDate;
+    }
 
     public void addParticipant(Participant participant) {
         participants.add(participant);
