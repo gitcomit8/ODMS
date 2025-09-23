@@ -32,16 +32,16 @@ public class ApproverDashboardController {
         // 1. Get requests "Pending My Action"
         RequestStatus myPendingStatus = getRequiredStatusForRole(userRole);
         List<EventRequest> pendingMyAction = (myPendingStatus != null)
-                ? eventRequestRepository.findByStatus(myPendingStatus)
+                ? eventRequestRepository.findByStatusAndIsHiddenFalse(myPendingStatus)
                 : Collections.emptyList();
 
         // 2. Get requests "In Progress" (approved by me, waiting for others)
         List<RequestStatus> inProgressStatuses = getInProgressStatuses(userRole);
-        List<EventRequest> inProgress = eventRequestRepository.findByStatusInOrderByIdAsc(inProgressStatuses);
+        List<EventRequest> inProgress = eventRequestRepository.findByIsHiddenFalseAndStatusInOrderByIdAsc(inProgressStatuses);
 
         // 3. Get "Finalized" requests (Approved or Rejected)
         List<RequestStatus> finalStatuses = List.of(RequestStatus.APPROVED, RequestStatus.REJECTED);
-        List<EventRequest> finalized = eventRequestRepository.findByStatusInOrderByIdDesc(finalStatuses);
+        List<EventRequest> finalized = eventRequestRepository.findByIsHiddenFalseAndStatusInOrderByIdDesc(finalStatuses);
 
         model.addAttribute("pendingMyAction", pendingMyAction);
         model.addAttribute("inProgress", inProgress);

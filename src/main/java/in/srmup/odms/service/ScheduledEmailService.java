@@ -36,7 +36,7 @@ public class ScheduledEmailService {
         // 1. Find all requests approved today
         // Note: You will need to add a new 'approvedDate' field to your EventRequest entity
         // and a corresponding 'findByApprovedDate' method to your repository.
-        List<EventRequest> approvedToday = eventRequestRepository.findByStatusAndApprovedDate(RequestStatus.APPROVED, LocalDate.now());
+        List<EventRequest> approvedToday = eventRequestRepository.findByStatusAndApprovedDateAndIsHiddenFalse(RequestStatus.APPROVED, LocalDate.now());
 
         if (approvedToday.isEmpty()) {
             System.out.println("No new ODs approved today. No emails sent.");

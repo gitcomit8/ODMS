@@ -21,7 +21,7 @@ public class FacultyController {
     @GetMapping("/dashboard")
     public String showFacultyDashboard(Model model) {
         // Use our new repository method to get all fully approved requests
-        List<EventRequest> approvedRequests = eventRequestRepository.findByStatusOrderByApprovedDateDesc(RequestStatus.APPROVED);
+        List<EventRequest> approvedRequests = eventRequestRepository.findByIsHiddenFalseAndStatusOrderByApprovedDateDesc(RequestStatus.APPROVED);
         model.addAttribute("requests", approvedRequests);
         return "faculty-dashboard"; // The name of our new HTML file
     }

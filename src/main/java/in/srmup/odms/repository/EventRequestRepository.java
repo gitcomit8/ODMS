@@ -8,15 +8,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface EventRequestRepository extends JpaRepository<EventRequest, Long> {
-    List<EventRequest> findAllByOrderByIdDesc();
+    List<EventRequest> findAllIsHiddenFalseAndByOrderByIdDesc();
 
-    List<EventRequest> findByStatus(RequestStatus status);
+    List<EventRequest> findByStatusAndIsHiddenFalse(RequestStatus status);
 
-    List<EventRequest> findByStatusAndApprovedDate(RequestStatus status, LocalDate approvedDate);
+    List<EventRequest> findByStatusAndApprovedDateAndIsHiddenFalse(RequestStatus status, LocalDate approvedDate);
 
-    List<EventRequest> findByStatusOrderByApprovedDateDesc(RequestStatus status);
+    List<EventRequest> findByIsHiddenFalseAndStatusOrderByApprovedDateDesc(RequestStatus status);
 
-    List<EventRequest> findByStatusInOrderByIdAsc(List<RequestStatus> statuses);
+    List<EventRequest> findByIsHiddenFalseAndStatusInOrderByIdAsc(List<RequestStatus> statuses);
 
-    List<EventRequest> findByStatusInOrderByIdDesc(List<RequestStatus> statuses);
+    List<EventRequest> findByIsHiddenFalseAndStatusInOrderByIdDesc(List<RequestStatus> statuses);
 }

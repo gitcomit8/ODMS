@@ -19,6 +19,7 @@ public class EventRequest {
     private LocalTime fromTime;
     private LocalTime toTime;
     private LocalDate approvedDate;
+    private boolean isHidden = false;
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
     @OneToMany(
@@ -27,6 +28,14 @@ public class EventRequest {
             orphanRemoval = true
     )
     private List<Participant> participants = new ArrayList<>();
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        isHidden = hidden;
+    }
 
     public LocalDate getStartDate() {
         return startDate;
@@ -72,7 +81,7 @@ public class EventRequest {
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
-    
+
     public LocalTime getFromTime() {
         return fromTime;
     }

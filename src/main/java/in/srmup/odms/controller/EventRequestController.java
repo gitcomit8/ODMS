@@ -37,12 +37,8 @@ public class EventRequestController {
 
     @PostMapping("/submit")
     public String submitRequestForm(@ModelAttribute EventRequest eventRequest) {
-        eventRequest.setStatus(RequestStatus.SUBMITTED);
-        for (Participant p : eventRequest.getParticipants()) {
-            p.setEventRequest(eventRequest);
-        }
-        eventRequestRepository.save(eventRequest);
-        return "redirect:/event-requests/success";
+        eventRequestService.createEventRequest(eventRequest);
+        return "redirect:/event-requests/my-requests"; // Redirect to the student's dashboard
     }
 
     @GetMapping("/success")
@@ -52,7 +48,7 @@ public class EventRequestController {
 
     @GetMapping("/my-requests")
     public String showMyRequests(Model model) {
-        List<EventRequest> requests = eventRequestRepository.findAllByOrderByIdDesc();
+        List<EventRequest> requests = eventRequestRepository.findAllIsHiddenFalseAndByOrderByIdDesc();
         model.addAttribute("requests", requests);
         return "my-requests";
     }
@@ -79,7 +75,7 @@ public class EventRequestController {
 
         List<EventRequest> pendingRequests;
         if (requiredStatus != null) {
-            pendingRequests = eventRequestRepository.findByStatus(requiredStatus); // You'll need to create this method in your repo
+            pendingRequests = eventRequestRepository.findByStatusAndIsHiddenFalse(requiredStatus); // You'll need to create this method in your repo
         } else {
             pendingRequests = Collections.emptyList(); // Or handle as needed
         }
