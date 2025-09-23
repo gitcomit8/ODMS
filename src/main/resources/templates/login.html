@@ -76,12 +76,14 @@
     <div class="message error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
     <form id="otpRequestForm" method="post" th:action="@{/generate-otp}">
+        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
         <label for="email">Enter your official email:</label>
         <input id="email" name="email" required type="email">
         <button type="submit">Send OTP</button>
     </form>
 
     <form id="otpLoginForm" method="post" style="display:none;" th:action="@{/login-with-otp}">
+        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
         <p>An OTP has been sent to <strong id="userEmail"></strong>. Please enter it below.</p>
         <input id="emailForLogin" name="email" type="hidden">
         <label for="otp">OTP:</label>
