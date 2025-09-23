@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class EventRequestService {
@@ -48,12 +49,15 @@ public class EventRequestService {
     }
 
     private void incrementOdLeaveCounts(EventRequest request) {
-        // Loop through each participant in the approved request
+        // Calculate the duration of the OD in days (inclusive)
+        long durationInDays = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate()) + 1;
+
+        if (durationInDays <= 0) return; // Safety check
+
         for (Participant participant : request.getParticipants()) {
-            // Find the corresponding student in the master list
             studentMasterRepository.findById(participant.getRegNo()).ifPresent(student -> {
-                // Increment the count and save the updated record
-                student.setOdLeaveCount(student.getOdLeaveCount() + 1);
+                // Increment the count by the duration of the event
+                student.setOdLeaveCount(student.getOdLeaveCount() + (int) durationInDays);
                 studentMasterRepository.save(student);
             });
         }

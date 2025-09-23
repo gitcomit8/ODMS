@@ -14,11 +14,11 @@ public class EventRequest {
     private Long id;
 
     private String eventName;
-    private LocalDate eventDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private LocalTime fromTime;
     private LocalTime toTime;
     private LocalDate approvedDate;
-
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
     @OneToMany(
@@ -27,6 +27,22 @@ public class EventRequest {
             orphanRemoval = true
     )
     private List<Participant> participants = new ArrayList<>();
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
 
     public LocalDate getApprovedDate() {
         return approvedDate;
@@ -56,15 +72,7 @@ public class EventRequest {
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
-
-    public LocalDate getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(LocalDate eventDate) {
-        this.eventDate = eventDate;
-    }
-
+    
     public LocalTime getFromTime() {
         return fromTime;
     }
