@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Faculty Dashboard</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<h1>Approved On-Duty Requests</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Event Name</th>
+        <th>Event Date</th>
+        <th>Date Approved</th>
+        <th>Participant Count</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${requests.isEmpty()}">
+        <td colspan="4" style="text-align: center;">No approved OD requests found.</td>
+    </tr>
+    <tr th:each="request : ${requests}">
+        <td th:text="${request.eventName}">Sample Event</td>
+        <td th:text="${#temporals.format(request.eventDate, 'dd-MMM-yyyy')}">23-Sep-2025</td>
+        <td th:text="${#temporals.format(request.approvedDate, 'dd-MMM-yyyy')}">22-Sep-2025</td>
+        <td th:text="${#lists.size(request.participants)}">25</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
