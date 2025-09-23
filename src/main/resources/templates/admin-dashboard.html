@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        select, button {
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+<h1>Admin Dashboard - User Management</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>User Email</th>
+        <th>Current Role</th>
+        <th>Change Role</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.email}">user@example.com</td>
+        <td th:text="${user.role}">ROLE_STUDENT_ORGANIZER</td>
+        <td>
+            <form method="post" th:action="@{/admin/update-role}">
+                <input name="userId" th:value="${user.id}" type="hidden"/>
+                <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+
+                <select name="role">
+                    <option th:each="role : ${allRoles}"
+                            th:selected="${role == user.role}"
+                            th:text="${role}"
+                            th:value="${role}">
+                    </option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
