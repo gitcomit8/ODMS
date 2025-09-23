@@ -20,6 +20,6 @@ public class StudentApiController {
     public ResponseEntity<StudentMaster> getStudentDetails(@PathVariable String regNo) {
         return studentMasterRepository.findById(regNo)
                 .map(ResponseEntity::ok) // If found, return 200 OK with student data
-                .orElse(ResponseEntity.notFound().build()); // If not found, return 404 Not Found
+                .orElse(ResponseEntity.notFound().build()); // If not found, return 404
     }
 }
