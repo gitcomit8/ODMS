@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collections;
@@ -47,6 +48,19 @@ public class ApproverDashboardController {
         model.addAttribute("finalized", finalized);
 
         return "approver-dashboard";
+    }
+
+    // In controller/ApproverDashboardController.java
+
+    @GetMapping("/event-details/{id}")
+    public String showEventDetails(@PathVariable("id") Long id, Model model) {
+        EventRequest eventRequest = eventRequestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event Request not found"));
+
+        model.addAttribute("event", eventRequest);
+        model.addAttribute("participants", eventRequest.getParticipants());
+
+        return "event-details"; // The name of our new HTML template
     }
 
     private RequestStatus getRequiredStatusForRole(String role) {

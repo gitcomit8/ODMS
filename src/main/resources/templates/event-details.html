@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Details</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        h1, h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Event Details</h1>
+    <h2 th:text="${event.eventName}">Event Name</h2>
+    <p>
+        <strong>Date:</strong> <span th:text="${#temporals.format(event.eventDate, 'dd-MMM-yyyy')}"></span><br>
+        <strong>Time:</strong> <span th:text="${#temporals.format(event.fromTime, 'hh:mm a')}"></span> - <span
+            th:text="${#temporals.format(event.toTime, 'hh:mm a')}"></span><br>
+        <strong>Current Status:</strong> <span th:text="${event.status}"></span>
+    </p>
+
+    <h2>Participant List</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Registration No</th>
+            <th>Name</th>
+            <th>Branch</th>
+            <th>Section</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="participant : ${participants}">
+            <td th:text="${participant.registrationNumber}"></td>
+            <td th:text="${participant.name}"></td>
+            <td th:text="${participant.branch}"></td>
+            <td th:text="${participant.section}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <a th:href="@{/approver/dashboard}">Back to Dashboard</a>
+</div>
+</body>
+</html>

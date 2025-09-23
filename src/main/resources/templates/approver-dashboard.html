@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Approver Dashboard</title>
@@ -7,15 +7,31 @@
         body {
             font-family: sans-serif;
             margin: 2em;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
         }
 
         .dashboard-section {
             margin-bottom: 40px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
         }
 
         h2 {
             border-bottom: 2px solid #007bff;
             padding-bottom: 10px;
+            color: #0056b3;
         }
 
         table {
@@ -25,53 +41,144 @@
         }
 
         th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
+            border: 1px solid #dee2e6;
+            padding: 12px;
             text-align: left;
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #e9ecef;
+        }
+
+        .actions form {
+            display: inline;
         }
 
         .actions button {
             padding: 5px 10px;
             cursor: pointer;
+            border-radius: 4px;
+            border: none;
         }
 
         .approve-btn {
             background-color: #28a745;
             color: white;
-            border: none;
         }
 
         .reject-btn {
             background-color: #dc3545;
             color: white;
-            border: none;
+        }
+
+        .no-requests {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-<h1>Approver Dashboard</h1>
+<div class="container">
+    <h1>Approver Dashboard</h1>
 
-<div class="dashboard-section">
-    <h2>Pending My Action</h2>
-    <table>
-    </table>
+    <div class="dashboard-section">
+        <h2>Pending My Action</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date(s)</th>
+                <th>Participant Count</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${pendingMyAction.isEmpty()}">
+                <td class="no-requests" colspan="4">No requests are currently waiting for your approval.</td>
+            </tr>
+            <tr th:each="request : ${pendingMyAction}">
+                <td>
+                    <a th:href="@{/approver/event-details/{id}(id=${request.id})}" th:text="${request.eventName}"></a>
+                </td>
+                <td th:text="|${#temporals.format(request.startDate, 'dd-MMM')} to ${#temporals.format(request.endDate, 'dd-MMM-yyyy')}|"></td>
+                <td th:text="${#lists.size(request.participants)}"></td>
+                <td class="actions">
+                    <form method="post" style="display:inline;"
+                          th:action="@{/event-requests/approve/{id}(id=${request.id})}">
+                        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                        <button class="approve-btn" type="submit">Approve</button>
+                    </form>
+                    <form method="post" style="display:inline;"
+                          th:action="@{/event-requests/reject/{id}(id=${request.id})}">
+                        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                        <button class="reject-btn" type="submit">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="dashboard-section">
+        <h2>In Progress (Awaiting Next Level Approval)</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date(s)</th>
+                <th>Current Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${inProgress.isEmpty()}">
+                <td class="no-requests" colspan="3">No requests are currently in the pipeline.</td>
+            </tr>
+            <tr th:each="request : ${inProgress}">
+                <td>
+                    <a th:href="@{/approver/event-details/{id}(id=${request.id})}" th:text="${request.eventName}"></a>
+                </td>
+                <td th:text="|${#temporals.format(request.startDate, 'dd-MMM')} to ${#temporals.format(request.endDate, 'dd-MMM-yyyy')}|"></td>
+                <td th:text="${request.status}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="dashboard-section">
+        <h2>Finalized Requests (Recently Approved/Rejected)</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date(s)</th>
+                <th>Final Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${finalized.isEmpty()}">
+                <td class="no-requests" colspan="3">No recently finalized requests.</td>
+            </tr>
+            <tr th:each="request : ${finalized}">
+                <td>
+                    <a th:href="@{/approver/event-details/{id}(id=${request.id})}" th:text="${request.eventName}"></a>
+                </td>
+                <td th:text="|${#temporals.format(request.startDate, 'dd-MMM')} to ${#temporals.format(request.endDate, 'dd-MMM-yyyy')}|"></td>
+                <td th:text="${request.status}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-
-<div class="dashboard-section">
-    <h2>In Progress (Awaiting Next Level Approval)</h2>
-    <table>
-    </table>
-</div>
-
-<div class="dashboard-section">
-    <h2>Finalized Requests (Recently Approved/Rejected)</h2>
-    <table>
-    </table>
-</div>
-
 </body>
 </html>
