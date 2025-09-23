@@ -15,4 +15,8 @@ public interface EventRequestRepository extends JpaRepository<EventRequest, Long
     List<EventRequest> findByStatusAndApprovedDate(RequestStatus status, LocalDate approvedDate);
 
     List<EventRequest> findByStatusOrderByApprovedDateDesc(RequestStatus status);
+
+    List<EventRequest> findByStatusInOrderByIdAsc(List<RequestStatus> statuses);
+
+    List<EventRequest> findByStatusInOrderByIdDesc(List<RequestStatus> statuses);
 }

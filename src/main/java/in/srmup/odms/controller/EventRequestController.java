@@ -91,12 +91,12 @@ public class EventRequestController {
     @PostMapping("/approve/{id}")
     public String approveRequest(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
         eventRequestService.approveRequest(id, userDetails);
-        return "redirect:/event-requests/pending";
+        return "redirect:/approver/dashboard";
     }
 
     @PostMapping("/reject/{id}")
     public String rejectRequest(@PathVariable("id") Long id) {
         eventRequestService.rejectRequest(id); // Call the service
-        return "redirect:/event-requests/pending";
+        return "redirect:/approver/dashboard";
     }
 }
