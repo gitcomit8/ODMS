@@ -48,7 +48,7 @@ public class EventRequestService {
         // Loop through each participant in the approved request
         for (Participant participant : request.getParticipants()) {
             // Find the corresponding student in the master list
-            studentMasterRepository.findById(participant.getRegistrationNumber()).ifPresent(student -> {
+            studentMasterRepository.findById(participant.getRegNo()).ifPresent(student -> {
                 // Increment the count and save the updated record
                 student.setOdLeaveCount(student.getOdLeaveCount() + 1);
                 studentMasterRepository.save(student);
