@@ -76,30 +76,37 @@
         <table id="participantTable">
             <thead>
             <tr>
-                <th>Full Name</th>
                 <th>Registration No</th>
+                <th>Full Name</th>
                 <th>Year</th>
                 <th>Branch</th>
-                <th>Section</th>
-                <th>Department</th>
                 <th>Action</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="participant, itemStat : *{participants}">
-                <td><input required th:field="*{participants[__${itemStat.index}__].name}" type="text"/></td>
-                <td><input required th:field="*{participants[__${itemStat.index}__].regNo}" type="text"/>
+                <td>
+                    <input class="regNoInput" onblur="fetchStudentDetails(this)"
+                           required th:field="*{participants[__${itemStat.index}__].registrationNumber}" type="text"/>
                 </td>
-                <td><input required th:field="*{participants[__${itemStat.index}__].academicYr}" type="number"/></td>
-                <td><input required th:field="*{participants[__${itemStat.index}__].branch}" type="text"/></td>
-                <td><input required th:field="*{participants[__${itemStat.index}__].section}" type="text"/></td>
-                <td><input required th:field="*{participants[__${itemStat.index}__].department}" type="text"/></td>
+                <td><input class="nameInput" readonly th:field="*{participants[__${itemStat.index}__].name}"
+                           type="text"/></td>
+                <td><input class="yearInput" readonly
+                           th:field="*{participants[__${itemStat.index}__].academicYear}" type="number"/></td>
+                <td><input class="branchInput" readonly th:field="*{participants[__${itemStat.index}__].branch}"
+                           type="text"/></td>
+
+                <input class="sectionInput" th:field="*{participants[__${itemStat.index}__].section}" type="hidden"/>
+                <input class="departmentInput" th:field="*{participants[__${itemStat.index}__].department}"
+                       type="hidden"/>
+
                 <td>
                     <button onclick="removeRow(this)" type="button">Remove</button>
                 </td>
             </tr>
             </tbody>
         </table>
+
         <div class="actions">
             <button onclick="addRow()" type="button">Add Participant</button>
         </div>
@@ -109,29 +116,49 @@
 </form>
 
 <script>
-    function addRow() {
-        const table = document.getElementById('participantTable').getElementsByTagName('tbody')[0];
-        const newRow = table.insertRow();
-        const newIndex = table.rows.length - 1;
+    async function fetchStudentDetails(element) {
+        const regNo = element.value;
+        const row = element.closest('tr');
 
-        newRow.innerHTML = `
-				<td><input type="text" name="participants[${newIndex}].name" required /></td>
-				<td><input type="text" name="participants[${newIndex}].registrationNumber" required /></td>
-				<td><input type="number" name="participants[${newIndex}].academicYear" required /></td>
-				<td><input type="text" name="participants[${newIndex}].branch" required /></td>
-				<td><input type="text" name="participants[${newIndex}].section" required /></td>
-				<td><input type="text" name="participants[${newIndex}].department" required /></td>
-				<td><button type="button" onclick="removeRow(this)">Remove</button></td>
-			`;
+        if (!regNo) return;
+
+        try {
+            const response = await fetch(`/api/students/${regNo}`);
+            if (!response.ok) {
+                alert('Student with Registration Number ' + regNo + ' not found!');
+                row.querySelectorAll('input:not(.regNoInput)').forEach(input => input.value = '');
+                return;
+            }
+
+            const student = await response.json();
+
+            // Populate the visible and hidden fields in the same row
+            row.querySelector('.nameInput').value = student.name;
+            row.querySelector('.yearInput').value = student.academicYear;
+            row.querySelector('.branchInput').value = student.branch;
+            row.querySelector('.sectionInput').value = student.section;
+            row.querySelector('.departmentInput').value = student.department;
+
+        } catch (error) {
+            console.error('Error fetching student details:', error);
+            alert('An error occurred. Please check the console.');
+        }
     }
 
-    function removeRow(button) {
-        // Do not remove the last row
-        if (document.getElementById('participantTable').getElementsByTagName('tbody')[0].rows.length > 1) {
-            button.closest('tr').remove();
-        } else {
-            alert("At least one participant is required.");
-        }
+    function addRow() {
+        // ... (your existing addRow function should work, but ensure the new fields match this structure)
+        const table = document.getElementById('participantTable').getElementsByTagName('tbody')[0];
+        const newIndex = table.rows.length;
+        const newRow = table.insertRow();
+        newRow.innerHTML = `
+            <td><input type="text" name="participants[${newIndex}].registrationNumber" onblur="fetchStudentDetails(this)" class="regNoInput" required /></td>
+            <td><input type="text" name="participants[${newIndex}].name" class="nameInput" readonly /></td>
+            <td><input type="number" name="participants[${newIndex}].academicYear" class="yearInput" readonly /></td>
+            <td><input type="text" name="participants[${newIndex}].branch" class="branchInput" readonly /></td>
+            <input type="hidden" name="participants[${newIndex}].section" class="sectionInput" />
+            <input type="hidden" name="participants[${newIndex}].department" class="departmentInput" />
+            <td><button type="button" onclick="removeRow(this)">Remove</button></td>
+        `;
     }
 </script>
 </body>

@@ -1,10 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        input {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
 </head>
 <body>
-$END$
+<div class="login-container">
+    <h2>OD Request System Login</h2>
+
+    <div class="message success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="message error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <form id="otpRequestForm" method="post" th:action="@{/generate-otp}">
+        <label for="email">Enter your official email:</label>
+        <input id="email" name="email" required type="email">
+        <button type="submit">Send OTP</button>
+    </form>
+
+    <form id="otpLoginForm" method="post" style="display:none;" th:action="@{/login-with-otp}">
+        <p>An OTP has been sent to <strong id="userEmail"></strong>. Please enter it below.</p>
+        <input id="emailForLogin" name="email" type="hidden">
+        <label for="otp">OTP:</label>
+        <input id="otp" name="otp" required type="text">
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+<script th:if="${successMessage}">
+    document.getElementById('otpRequestForm').style.display = 'none';
+    const loginForm = document.getElementById('otpLoginForm');
+    loginForm.style.display = 'flex';
+
+    const emailSentTo = "[[${email}]]";
+    document.getElementById('userEmail').textContent = emailSentTo;
+    document.getElementById('emailForLogin').value = emailSentTo;
+</script>
 </body>
 </html>
