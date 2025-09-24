@@ -1,4 +1,4 @@
-package in.srmup.odms.config;
+package com.srmist.odrequest.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,16 +21,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        // Allow access to login, OTP generation, and static resources
-                        .requestMatchers("/login", "/generate-otp", "/login-with-otp", "/css/**", "/js/**").permitAll()
-                        // All other requests must be authenticated
+                        // Permit access to all login-related paths and static resources
+                        .requestMatchers("/login", "/generate-otp", "/login-with-otp", "/dev-login", "/css/**", "/js/**").permitAll()
+                        // Secure everything else
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .permitAll()
-                )
+                // Keep CSRF enabled and configure logout as before
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
