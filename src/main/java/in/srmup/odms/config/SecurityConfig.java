@@ -1,4 +1,4 @@
-package com.srmist.odrequest.config;
+package in.srmup.odms.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
