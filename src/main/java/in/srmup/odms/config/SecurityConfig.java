@@ -21,16 +21,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        // Permit access to all login-related paths and static resources
-                        .requestMatchers("/login", "/generate-otp", "/login-with-otp", "/dev-login", "/css/**", "/js/**").permitAll()
-                        // Secure everything else
-                        .anyRequest().authenticated()
+                        //.requestMatchers("/login", "/generate-otp", "/login-with-otp", "/dev-login", "/css/**", "/js/**").permitAll()
+                        //.anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 // Keep CSRF enabled and configure logout as before
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
+        System.out.println("INSIDE SECURITY CONFIG");
 
         return http.build();
     }

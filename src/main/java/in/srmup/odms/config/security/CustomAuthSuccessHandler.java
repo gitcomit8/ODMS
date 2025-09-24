@@ -15,7 +15,7 @@ public class CustomAuthSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-        System.out.println("User authorities upon login: " + authentication.getAuthorities());
+        System.out.println("REACHED IN AUTH SUCCESS HANDLER");
 
         String redirectUrl = "/"; // Default redirect URL
 

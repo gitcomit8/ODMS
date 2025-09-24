@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Controller
-@Profile("dev") // This controller is only active when the 'dev' profile is used
+@Profile("dev")
 @ConditionalOnProperty(name = "app.security.dev-login.enabled", havingValue = "true")
 public class DevLoginController {
 
