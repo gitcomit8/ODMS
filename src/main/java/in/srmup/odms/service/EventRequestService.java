@@ -88,7 +88,7 @@ public class EventRequestService {
             eventRequest.getParticipants().removeIf(p -> urgentRegNo.equals(p.getRegNo()));
 
             eventRequest.setStatus(RequestStatus.APPROVED);
-            eventRequest.setHidden(true);
+            eventRequest.setIsHidden(true);
             eventRequest.setApprovedDate(LocalDate.now());
         } else {
             eventRequest.setStatus(RequestStatus.SUBMITTED);

@@ -29,10 +29,17 @@ public class EventRequestController {
 
     @GetMapping("/new")
     public String showRequestForm(Model model) {
-        EventRequest eventRequest = new EventRequest();
-        eventRequest.addParticipant(new Participant());
-        model.addAttribute("eventRequest", eventRequest);
-        return "event-request-form";
+        try {
+            EventRequest eventRequest = new EventRequest();
+            eventRequest.addParticipant(new Participant());
+            model.addAttribute("eventRequest", eventRequest);
+            return "event-request-form";
+        } catch (Exception e) {
+            System.err.println("Error in EventRequestController.showRequestForm: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Error loading event request form: " + e.getMessage());
+            return "error-page";
+        }
     }
 
     @PostMapping("/submit")
@@ -48,7 +55,7 @@ public class EventRequestController {
 
     @GetMapping("/my-requests")
     public String showMyRequests(Model model) {
-        List<EventRequest> requests = eventRequestRepository.findAllIsHiddenFalseAndByOrderByIdDesc();
+        List<EventRequest> requests = eventRequestRepository.findAllByIsHiddenFalseOrderByIdDesc();
         model.addAttribute("requests", requests);
         return "my-requests";
     }

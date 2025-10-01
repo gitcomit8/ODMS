@@ -21,11 +21,18 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String showAdminDashboard(Model model) {
-        List<User> allUsers = adminService.findAllUsers();
-        model.addAttribute("users", allUsers);
-        // This list will populate the dropdowns in the form
-        model.addAttribute("allRoles", List.of("ROLE_ADMIN", "ROLE_STUDENT_ORGANIZER", "ROLE_EVENT_COORDINATOR", "ROLE_STUDENT_WELFARE", "ROLE_HOD", "ROLE_FACULTY"));
-        return "admin-dashboard"; // The name of our new HTML file
+        try {
+            List<User> allUsers = adminService.findAllUsers();
+            model.addAttribute("users", allUsers);
+            // This list will populate the dropdowns in the form
+            model.addAttribute("allRoles", List.of("ROLE_ADMIN", "ROLE_STUDENT_ORGANIZER", "ROLE_EVENT_COORDINATOR", "ROLE_STUDENT_WELFARE", "ROLE_HOD", "ROLE_FACULTY"));
+            return "admin-dashboard"; // The name of our new HTML file
+        } catch (Exception e) {
+            System.err.println("Error in AdminController.showAdminDashboard: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Error loading admin dashboard: " + e.getMessage());
+            return "error-page";
+        }
     }
 
     @PostMapping("/update-role")

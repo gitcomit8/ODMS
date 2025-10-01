@@ -25,9 +25,13 @@ public class ApproverDashboardController {
 
     @GetMapping("/dashboard")
     public String showDashboard(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        String userRole = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .findFirst().orElse("");
+        // Handle case where userDetails might be null (for dev purposes)
+        String userRole = "ROLE_EVENT_COORDINATOR"; // Default for testing
+        if (userDetails != null) {
+            userRole = userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .findFirst().orElse("ROLE_EVENT_COORDINATOR");
+        }
 
         // 1. Get requests "Pending My Action"
         RequestStatus myPendingStatus = getRequiredStatusForRole(userRole);
@@ -46,6 +50,7 @@ public class ApproverDashboardController {
         model.addAttribute("pendingMyAction", pendingMyAction);
         model.addAttribute("inProgress", inProgress);
         model.addAttribute("finalized", finalized);
+        model.addAttribute("userRole", userRole);
 
         return "approver-dashboard";
     }

@@ -19,9 +19,11 @@ public class EventRequest {
     private LocalTime fromTime;
     private LocalTime toTime;
     private LocalDate approvedDate;
-    private boolean isHidden = false;
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
+
+    @Column(name = "is_hidden", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean isHidden = false;
     @OneToMany(
             mappedBy = "eventRequest",
             cascade = CascadeType.ALL,
@@ -29,12 +31,12 @@ public class EventRequest {
     )
     private List<Participant> participants = new ArrayList<>();
 
-    public boolean isHidden() {
+    public Boolean getIsHidden() {
         return isHidden;
     }
 
-    public void setHidden(boolean hidden) {
-        isHidden = hidden;
+    public void setIsHidden(Boolean isHidden) {
+        this.isHidden = isHidden;
     }
 
     public LocalDate getStartDate() {

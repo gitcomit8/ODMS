@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OD Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .nav-links {
+            background: #007bff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .dev-section {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .dev-section h3 {
+            color: #155724;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 th:text="${message}">Welcome to OD Management System</h1>
+        
+        <div class="nav-links">
+            <h3 style="margin: 0 0 15px 0; color: white;">Navigation</h3>
+            <a href="/login">Login</a>
+            <a href="/h2-console" target="_blank">H2 Database Console</a>
+            <div th:if="${devLoginEnabled}">
+                <a href="/dev-login" style="background-color: #28a745;">🔧 Developer Login</a>
+            </div>
+        </div>
+
+        <div th:if="${devLoginEnabled}" class="dev-section">
+            <h3>🚀 Developer Dashboard Enabled</h3>
+            <p><strong>Development Mode is Active!</strong> You can test the application functionality using the following:</p>
+            <ul>
+                <li><strong>Developer Login:</strong> <a href="/dev-login">Access the dev login</a> to test different user roles without OTP</li>
+                <li><strong>H2 Database Console:</strong> <a href="/h2-console" target="_blank">View and manage database</a>
+                    <ul>
+                        <li>JDBC URL: <code>jdbc:h2:mem:testdb</code></li>
+                        <li>Username: <code>sa</code></li>
+                        <li>Password: (leave empty)</li>
+                    </ul>
+                </li>
+                <li><strong>Available Roles for Testing:</strong>
+                    <ul>
+                        <li>ROLE_ADMIN - Access admin dashboard</li>
+                        <li>ROLE_EVENT_COORDINATOR - Access approver dashboard</li>
+                        <li>ROLE_STUDENT_WELFARE - Access approver dashboard</li>
+                        <li>ROLE_HOD - Access approver dashboard</li>
+                        <li>ROLE_STUDENT_ORGANIZER - Access event requests</li>
+                        <li>ROLE_FACULTY - Access faculty dashboard</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 5px;">
+            <h3>System Information</h3>
+            <p><strong>Application:</strong> OD Management System (On-Duty Leave Management)</p>
+            <p><strong>Port:</strong> 8080</p>
+            <p><strong>Profile:</strong> Development</p>
+            <p><strong>Database:</strong> H2 In-Memory Database</p>
+        </div>
+    </div>
+</body>
+</html>

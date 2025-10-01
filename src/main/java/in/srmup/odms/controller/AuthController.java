@@ -21,6 +21,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
     private CustomAuthSuccessHandler customAuthSuccessHandler;
 
     @GetMapping("/login")

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface EventRequestRepository extends JpaRepository<EventRequest, Long> {
-    List<EventRequest> findAllIsHiddenFalseAndByOrderByIdDesc();
+    List<EventRequest> findAllByIsHiddenFalseOrderByIdDesc();
 
     List<EventRequest> findByStatusAndIsHiddenFalse(RequestStatus status);
 

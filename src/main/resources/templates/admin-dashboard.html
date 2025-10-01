@@ -48,8 +48,7 @@
         <td>
             <form method="post" th:action="@{/admin/update-role}">
                 <input name="userId" th:value="${user.id}" type="hidden"/>
-                <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-
+                
                 <select name="role">
                     <option th:each="role : ${allRoles}"
                             th:selected="${role == user.role}"
