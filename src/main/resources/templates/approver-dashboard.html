@@ -112,7 +112,7 @@
                     <a th:href="@{/approver/event-details/{id}(id=${request.id})}" th:text="${request.eventName}"></a>
                 </td>
                 <td th:text="|${#temporals.format(request.startDate, 'dd-MMM')} to ${#temporals.format(request.endDate, 'dd-MMM-yyyy')}|"></td>
-                <td th:text="${#lists.size(request.participants)}"></td>
+                <td th:text="${request.participants != null ? #lists.size(request.participants) : 0}"></td>
                 <td class="actions">
                     <form method="post" style="display:inline;"
                           th:action="@{/event-requests/approve/{id}(id=${request.id})}">

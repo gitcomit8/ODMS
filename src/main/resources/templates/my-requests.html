@@ -53,7 +53,7 @@
     <thead>
     <tr>
         <th>Event Name</th>
-        <th>Event Date</th>
+        <th>Event Date(s)</th>
         <th>Participant Count</th>
         <th>Status</th>
     </tr>
@@ -61,7 +61,7 @@
     <tbody>
     <tr th:each="request : ${requests}">
         <td th:text="${request.eventName}">Hackathon</td>
-        <td th:text="${#temporals.format(request.eventDate, 'dd-MMM-yyyy')}">25-Jul-2025</td>
+        <td th:text="|${#temporals.format(request.startDate, 'dd-MMM')} to ${#temporals.format(request.endDate, 'dd-MMM-yyyy')}|">25-Jul-2025</td>
         <td th:text="${#lists.size(request.participants)}">15</td>
         <td>
 					<span class="status"
