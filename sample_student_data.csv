@@ -1,0 +1,11 @@
+RegistrationNumber,Name,AcademicYear,Branch,Section,Department
+RA2111003010001,John Doe,2024,CSE,A,Computer Science
+RA2111003010002,Jane Smith,2024,CSE,A,Computer Science
+RA2111003010003,Bob Johnson,2024,CSE,B,Computer Science
+RA2111003010004,Alice Cooper,2024,ECE,A,Electronics and Communication
+RA2111003010005,Charlie Brown,2024,ECE,B,Electronics and Communication
+RA2111003010006,David Wilson,2024,IT,A,Information Technology
+RA2111003010007,Emma Davis,2024,IT,A,Information Technology
+RA2111003010008,Frank Miller,2024,MECH,A,Mechanical Engineering
+RA2111003010009,Grace Lee,2024,CIVIL,A,Civil Engineering
+RA2111003010010,Henry Taylor,2024,EEE,A,Electrical and Electronics

@@ -2,9 +2,11 @@ package in.srmup.odms.controller;
 
 
 import in.srmup.odms.model.EventRequest;
+import in.srmup.odms.model.FacultyMaster;
 import in.srmup.odms.model.Participant;
 import in.srmup.odms.model.RequestStatus;
 import in.srmup.odms.repository.EventRequestRepository;
+import in.srmup.odms.repository.FacultyMasterRepository;
 import in.srmup.odms.service.EventRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,12 +29,20 @@ public class EventRequestController {
     @Autowired
     private EventRequestRepository eventRequestRepository;
 
+    @Autowired
+    private FacultyMasterRepository facultyMasterRepository;
+
     @GetMapping("/new")
     public String showRequestForm(Model model) {
         try {
             EventRequest eventRequest = new EventRequest();
             eventRequest.addParticipant(new Participant());
             model.addAttribute("eventRequest", eventRequest);
+            
+            // Load all faculty for selection
+            List<FacultyMaster> allFaculty = facultyMasterRepository.findAll();
+            model.addAttribute("allFaculty", allFaculty);
+            
             return "event-request-form";
         } catch (Exception e) {
             System.err.println("Error in EventRequestController.showRequestForm: " + e.getMessage());

@@ -2,63 +2,248 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Import Student Data</title>
+    <title>CSV Data Import</title>
     <style>
         body {
             font-family: sans-serif;
             margin: 2em;
+            background-color: #f8f9fa;
         }
 
         .container {
-            max-width: 600px;
-            padding: 20px;
-            border: 1px solid #ccc;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .import-section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .message {
-            padding: 10px;
-            margin-bottom: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
             border-radius: 4px;
+            border: 1px solid;
         }
 
         .success {
             background-color: #d4edda;
             color: #155724;
+            border-color: #c3e6cb;
         }
 
         .error {
             background-color: #f8d7da;
             color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border-color: #bee5eb;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
         }
 
         input[type="file"] {
-            margin-bottom: 15px;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group {
+            margin: 15px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
         }
 
         button {
-            padding: 10px 15px;
+            padding: 12px 24px;
             background-color: #007bff;
             color: white;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .secondary-btn {
+            background-color: #28a745;
+        }
+
+        .secondary-btn:hover {
+            background-color: #218838;
+        }
+
+        .csv-format {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+            margin: 15px 0;
+        }
+
+        .csv-format code {
+            background-color: #e9ecef;
+            padding: 2px 4px;
+            border-radius: 2px;
+            font-family: monospace;
+        }
+
+        h1 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #495057;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            background-color: #5a6268;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>Import Student Master Data</h2>
+    <div class="container">
+        <h1>📊 CSV Data Import Center</h1>
+        
+        <div class="nav-links">
+            <a href="/admin/dashboard">← Admin Dashboard</a>
+            <a href="/">Home</a>
+        </div>
 
-    <div class="message success" th:if="${successMessage}" th:text="${successMessage}"></div>
-    <div class="message error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+        <div class="message success" th:if="${successMessage}" th:text="${successMessage}"></div>
+        <div class="message error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-    <p>Please upload the master student list as a CSV file. This will replace all existing student data.</p>
+        <!-- Student Data Import Section -->
+        <div class="import-section">
+            <h2>👨‍🎓 Student Master Data Import</h2>
+            
+            <div class="info">
+                <strong>📋 CSV Format Required:</strong><br>
+                <div class="csv-format">
+                    <strong>Header:</strong> <code>RegistrationNumber,Name,AcademicYear,Branch,Section,Department</code><br>
+                    <strong>Example:</strong> <code>RA2111003010001,John Doe,2024,CSE,A,Computer Science</code>
+                </div>
+            </div>
 
-    <form enctype="multipart/form-data" method="POST" th:action="@{/admin/import/students}">
-        <input accept=".csv" name="file" required type="file">
-        <br>
-        <button type="submit">Upload and Import</button>
-    </form>
-</div>
+            <form enctype="multipart/form-data" method="POST" th:action="@{/admin/import/students}">
+                <div class="form-group">
+                    <label for="studentFile">Select Student CSV File:</label>
+                    <input id="studentFile" accept=".csv" name="file" required type="file">
+                </div>
+                
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" name="clearData" value="true">
+                        Clear existing student data before import
+                    </label>
+                </div>
+                
+                <button type="submit">📥 Import Students</button>
+            </form>
+        </div>
+
+        <!-- Faculty Data Import Section -->
+        <div class="import-section">
+            <h2>👨‍🏫 Faculty Master Data Import</h2>
+            
+            <div class="info">
+                <strong>📋 CSV Format Required:</strong><br>
+                <div class="csv-format">
+                    <strong>Header:</strong> <code>FacultyName,FacultyEmail,Branch,Section</code><br>
+                    <strong>Example:</strong> <code>Dr. Smith Johnson,smith.johnson@university.edu,CSE,A</code>
+                </div>
+            </div>
+
+            <form enctype="multipart/form-data" method="POST" th:action="@{/admin/import/faculty}">
+                <div class="form-group">
+                    <label for="facultyFile">Select Faculty CSV File:</label>
+                    <input id="facultyFile" accept=".csv" name="file" required type="file">
+                </div>
+                
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" name="clearData" value="true">
+                        Clear existing faculty data before import
+                    </label>
+                </div>
+                
+                <button type="submit" class="secondary-btn">📥 Import Faculty</button>
+            </form>
+        </div>
+
+        <!-- Sample Files Section -->
+        <div class="import-section">
+            <h2>📄 Sample CSV Templates</h2>
+            
+            <p>Download sample CSV files to understand the required format:</p>
+            
+            <div class="csv-format">
+                <strong>Student Sample CSV:</strong><br>
+                <code>RegistrationNumber,Name,AcademicYear,Branch,Section,Department<br>
+                RA2111003010001,John Doe,2024,CSE,A,Computer Science<br>
+                RA2111003010002,Jane Smith,2024,CSE,A,Computer Science<br>
+                RA2111003010003,Bob Johnson,2024,ECE,B,Electronics</code>
+            </div>
+
+            <div class="csv-format">
+                <strong>Faculty Sample CSV:</strong><br>
+                <code>FacultyName,FacultyEmail,Branch,Section<br>
+                Dr. Smith Johnson,smith.johnson@university.edu,CSE,A<br>
+                Prof. Alice Brown,alice.brown@university.edu,ECE,B<br>
+                Dr. Charlie Wilson,charlie.wilson@university.edu,IT,A</code>
+            </div>
+            
+            <p><strong>💡 Tips:</strong></p>
+            <ul>
+                <li>Ensure your CSV file has proper headers as shown above</li>
+                <li>Remove any extra spaces around values</li>
+                <li>Academic year should be numeric (e.g., 2024)</li>
+                <li>Faculty email should be valid email format</li>
+                <li>Use "Clear existing data" checkbox if you want to replace all data</li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>

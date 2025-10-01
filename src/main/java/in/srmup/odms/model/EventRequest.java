@@ -24,6 +24,11 @@ public class EventRequest {
 
     @Column(name = "is_hidden", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isHidden = false;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "faculty_coordinator_id")
+    private FacultyMaster facultyCoordinator;
+    
     @OneToMany(
             mappedBy = "eventRequest",
             cascade = CascadeType.ALL,
@@ -114,5 +119,13 @@ public class EventRequest {
 
     public void setParticipants(List<Participant> participants) {
         this.participants = participants;
+    }
+
+    public FacultyMaster getFacultyCoordinator() {
+        return facultyCoordinator;
+    }
+
+    public void setFacultyCoordinator(FacultyMaster facultyCoordinator) {
+        this.facultyCoordinator = facultyCoordinator;
     }
 }

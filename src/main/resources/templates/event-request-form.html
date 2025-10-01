@@ -24,7 +24,7 @@
             font-weight: bold;
         }
 
-        input {
+        input, select {
             padding: 8px;
             box-sizing: border-box;
         }
@@ -71,6 +71,15 @@
 
             <label for="toTime">To Time:</label>
             <input id="toTime" required th:field="*{toTime}" type="time">
+
+            <label for="facultyCoordinator">Faculty Coordinator:</label>
+            <select id="facultyCoordinator" required th:field="*{facultyCoordinator.id}">
+                <option value="">-- Select Faculty Coordinator --</option>
+                <option th:each="faculty : ${allFaculty}"
+                        th:value="${faculty.id}"
+                        th:text="${faculty.facultyName + ' (' + faculty.branch + '-' + faculty.section + ')'}">
+                </option>
+            </select>
         </div>
     </fieldset>
 

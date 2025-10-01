@@ -1,9 +1,11 @@
 package in.srmup.odms.service;
 
 import in.srmup.odms.model.EventRequest;
+import in.srmup.odms.model.FacultyMaster;
 import in.srmup.odms.model.Participant;
 import in.srmup.odms.model.RequestStatus;
 import in.srmup.odms.repository.EventRequestRepository;
+import in.srmup.odms.repository.FacultyMasterRepository;
 import in.srmup.odms.repository.StudentMasterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,9 @@ public class EventRequestService {
 
     @Autowired
     private StudentMasterRepository studentMasterRepository;
+
+    @Autowired
+    private FacultyMasterRepository facultyMasterRepository;
 
     @Value("${od.request.urgent-regno}")
     private String urgentRegNo;
