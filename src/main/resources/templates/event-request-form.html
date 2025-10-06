@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>New Event OD Request</title>
     <style>
         body {
@@ -76,8 +78,8 @@
             <select id="facultyCoordinator" required th:field="*{facultyCoordinator.id}">
                 <option value="">-- Select Faculty Coordinator --</option>
                 <option th:each="faculty : ${allFaculty}"
-                        th:value="${faculty.id}"
-                        th:text="${faculty.facultyName + ' (' + faculty.branch + '-' + faculty.section + ')'}">
+                        th:text="${faculty.facultyName + ' (' + faculty.branch + '-' + faculty.section + ')'}"
+                        th:value="${faculty.id}">
                 </option>
             </select>
         </div>
@@ -135,7 +137,16 @@
         if (!regNo) return;
 
         try {
-            const response = await fetch(`/api/students/${regNo}`);
+            // Get CSRF token from meta tags
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            const response = await fetch(`/api/students/${regNo}`, {
+                method: 'GET',
+                headers: {
+                    [header]: token
+                }
+            });
 
             if (!response.ok) {
                 alert('Student with Registration Number ' + regNo + ' not found!');

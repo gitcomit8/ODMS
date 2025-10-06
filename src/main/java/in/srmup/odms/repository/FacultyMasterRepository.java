@@ -9,4 +9,6 @@ public interface FacultyMasterRepository extends JpaRepository<FacultyMaster, Lo
 
     // Spring Data JPA will automatically create the query for this method name
     Optional<FacultyMaster> findByBranchAndSection(String branch, String section);
+
+    Optional<FacultyMaster> findByFacultyEmail(String email);
 }

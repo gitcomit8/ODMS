@@ -26,10 +26,9 @@ public class SecurityConfig {
                         // For development, allow all requests
                         .anyRequest().permitAll()
                 )
-                // Disable CSRF for H2 console and enable frame options for H2 console
+                // Enable CSRF protection except for H2 console (development only)
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/h2-console/**")
-                        .disable()
                 )
                 .headers(headers -> headers
                         .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Allow H2 console frames

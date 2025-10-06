@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,11 +39,11 @@ public class EventRequestController {
             EventRequest eventRequest = new EventRequest();
             eventRequest.addParticipant(new Participant());
             model.addAttribute("eventRequest", eventRequest);
-            
+
             // Load all faculty for selection
             List<FacultyMaster> allFaculty = facultyMasterRepository.findAll();
             model.addAttribute("allFaculty", allFaculty);
-            
+
             return "event-request-form";
         } catch (Exception e) {
             System.err.println("Error in EventRequestController.showRequestForm: " + e.getMessage());
@@ -102,14 +103,58 @@ public class EventRequestController {
     }
 
     @PostMapping("/approve/{id}")
-    public String approveRequest(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        eventRequestService.approveRequest(id, userDetails);
+    public String approveRequest(@PathVariable("id") Long id,
+                                 @AuthenticationPrincipal UserDetails userDetails,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            // Check if user is authenticated
+            if (userDetails == null) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "You must be logged in to approve requests. Please log in first.");
+                return "redirect:/dev-login";
+            }
+
+            eventRequestService.approveRequest(id, userDetails);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Request approved successfully! It has been forwarded to the next approver.");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Cannot approve: " + e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error approving request: " + e.getMessage());
+        }
         return "redirect:/approver/dashboard";
     }
 
     @PostMapping("/reject/{id}")
-    public String rejectRequest(@PathVariable("id") Long id) {
-        eventRequestService.rejectRequest(id); // Call the service
+    public String rejectRequest(@PathVariable("id") Long id,
+                                @RequestParam String reason,
+                                @AuthenticationPrincipal UserDetails userDetails,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            // Check if user is authenticated
+            if (userDetails == null) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "You must be logged in to reject requests. Please log in first.");
+                return "redirect:/dev-login";
+            }
+
+            if (reason == null || reason.trim().isEmpty()) {
+                throw new IllegalArgumentException("Rejection reason is required");
+            }
+            eventRequestService.rejectRequest(id, userDetails, reason);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Request rejected successfully!");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Cannot reject: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error rejecting request: " + e.getMessage());
+        }
         return "redirect:/approver/dashboard";
     }
 }

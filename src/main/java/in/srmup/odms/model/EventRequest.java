@@ -24,17 +24,27 @@ public class EventRequest {
 
     @Column(name = "is_hidden", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isHidden = false;
-    
+
+    @Column(length = 1000)
+    private String rejectionReason;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_coordinator_id")
     private FacultyMaster facultyCoordinator;
-    
+
     @OneToMany(
             mappedBy = "eventRequest",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<Participant> participants = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "eventRequest",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ApprovalHistory> approvalHistory = new ArrayList<>();
 
     public Boolean getIsHidden() {
         return isHidden;
@@ -127,5 +137,26 @@ public class EventRequest {
 
     public void setFacultyCoordinator(FacultyMaster facultyCoordinator) {
         this.facultyCoordinator = facultyCoordinator;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+
+    public List<ApprovalHistory> getApprovalHistory() {
+        return approvalHistory;
+    }
+
+    public void setApprovalHistory(List<ApprovalHistory> approvalHistory) {
+        this.approvalHistory = approvalHistory;
+    }
+
+    public void addApprovalHistory(ApprovalHistory history) {
+        approvalHistory.add(history);
+        history.setEventRequest(this);
     }
 }

@@ -1,11 +1,14 @@
 package in.srmup.odms.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +31,9 @@ public class DevLoginController {
     }
 
     @PostMapping("/dev-login")
-    public String processDevLogin(@RequestParam String username, @RequestParam String role) {
+    public String processDevLogin(@RequestParam String username,
+                                  @RequestParam String role,
+                                  HttpServletRequest request) {
         // Create a fake authentication object with the chosen role
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 username,
@@ -36,8 +41,18 @@ public class DevLoginController {
                 Collections.singletonList(new SimpleGrantedAuthority(role))
         );
 
-        // Manually set the authentication in the security context
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        // Create a new security context and set the authentication
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(auth);
+        SecurityContextHolder.setContext(securityContext);
+
+        // Persist the security context in the session
+        request.getSession().setAttribute(
+                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                securityContext
+        );
+
+        System.out.println("Dev Login: User '" + username + "' logged in with role: " + role);
 
         // Redirect to the role-based dashboard (using the same logic as your success handler)
         return switch (role) {
