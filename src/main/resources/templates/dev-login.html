@@ -61,6 +61,8 @@
 <div class="login-container">
     <h2>Developer Login</h2>
     <form method="post" th:action="@{/dev-login}">
+        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+        
         <label for="username">Username (can be anything):</label>
         <input id="username" name="username" required type="text" value="TestUser">
 

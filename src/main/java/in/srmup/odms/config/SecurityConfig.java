@@ -23,15 +23,23 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // Allow access to H2 console, dev-login and static resources
                         .requestMatchers("/h2-console/**", "/dev-login", "/login", "/generate-otp", "/login-with-otp", "/css/**", "/js/**", "/images/**").permitAll()
-                        // For development, allow all requests
+                        // Require authentication for approver endpoints
+                        .requestMatchers("/approver/**").authenticated()
+                        // For development, allow all other requests
                         .anyRequest().permitAll()
                 )
-                // Enable CSRF protection except for H2 console (development only)
+                // Enable CSRF protection except for H2 console and dev-login
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**")
+                        .ignoringRequestMatchers("/h2-console/**", "/dev-login")
                 )
                 .headers(headers -> headers
                         .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Allow H2 console frames
+                )
+                // Configure custom login
+                .formLogin(form -> form
+                        .loginPage("/dev-login")
+                        .loginProcessingUrl("/perform-login")  // Use different URL for Spring Security login
+                        .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")

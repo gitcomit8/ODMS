@@ -5,9 +5,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,11 +37,19 @@ public class DevLoginController {
     public String processDevLogin(@RequestParam String username,
                                   @RequestParam String role,
                                   HttpServletRequest request) {
-        // Create a fake authentication object with the chosen role
+        // Create a UserDetails object with the chosen role
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+        UserDetails userDetails = User.builder()
+                .username(username)
+                .password("") // No password needed for dev login
+                .authorities(authorities)
+                .build();
+
+        // Create authentication with UserDetails as principal
         Authentication auth = new UsernamePasswordAuthenticationToken(
-                username,
+                userDetails,
                 null,
-                Collections.singletonList(new SimpleGrantedAuthority(role))
+                authorities
         );
 
         // Create a new security context and set the authentication

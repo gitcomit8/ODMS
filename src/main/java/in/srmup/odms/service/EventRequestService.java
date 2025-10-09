@@ -38,19 +38,10 @@ public class EventRequestService {
         EventRequest request = eventRequestRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Request not found"));
 
-        // Handle null UserDetails (for development/testing scenarios)
-        if (approver == null) {
-            throw new IllegalStateException("User not authenticated. Please log in to approve requests.");
-        }
-
         String approverRole = approver.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
-                .orElse(null);
-
-        if (approverRole == null) {
-            throw new IllegalStateException("User role not found. Please ensure you have a valid role assigned.");
-        }
+                .orElseThrow(() -> new IllegalStateException("User role not found"));
 
         String approverEmail = approver.getUsername();
         String approverName = getApproverName(approverEmail, approverRole);
@@ -119,19 +110,10 @@ public class EventRequestService {
         EventRequest request = eventRequestRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Request not found"));
 
-        // Handle null UserDetails (for development/testing scenarios)
-        if (rejector == null) {
-            throw new IllegalStateException("User not authenticated. Please log in to reject requests.");
-        }
-
         String rejectorRole = rejector.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
-                .orElse(null);
-
-        if (rejectorRole == null) {
-            throw new IllegalStateException("User role not found. Please ensure you have a valid role assigned.");
-        }
+                .orElseThrow(() -> new IllegalStateException("User role not found"));
 
         String rejectorEmail = rejector.getUsername();
         String rejectorName = getApproverName(rejectorEmail, rejectorRole);

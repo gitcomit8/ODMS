@@ -6,8 +6,10 @@ import in.srmup.odms.repository.ApprovalHistoryRepository;
 import in.srmup.odms.repository.EventRequestRepository;
 import in.srmup.odms.service.EventRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,12 +35,21 @@ public class ApproverDashboardController {
     @GetMapping("/dashboard")
     public String showDashboard(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            // Handle case where userDetails might be null (for dev purposes)
-            String userRole = "ROLE_EVENT_COORDINATOR"; // Default for testing
+            // Get user role from authentication
+            String userRole = "ROLE_EVENT_COORDINATOR"; // Default fallback
+            
             if (userDetails != null && userDetails.getAuthorities() != null) {
                 userRole = userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .findFirst().orElse("ROLE_EVENT_COORDINATOR");
+            } else {
+                // Fallback: try to get from SecurityContext directly
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                if (auth != null && auth.getAuthorities() != null) {
+                    userRole = auth.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .findFirst().orElse("ROLE_EVENT_COORDINATOR");
+                }
             }
 
             // 1. Get requests "Pending My Action"
@@ -104,13 +115,6 @@ public class ApproverDashboardController {
                                  @AuthenticationPrincipal UserDetails userDetails,
                                  RedirectAttributes redirectAttributes) {
         try {
-            // Check if user is authenticated
-            if (userDetails == null) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                        "You must be logged in to approve requests. Please log in first.");
-                return "redirect:/dev-login";
-            }
-
             eventRequestService.approveRequest(id, userDetails);
             redirectAttributes.addFlashAttribute("successMessage",
                     "Request approved successfully! It has been forwarded to the next approver.");
@@ -130,13 +134,6 @@ public class ApproverDashboardController {
                                 @AuthenticationPrincipal UserDetails userDetails,
                                 RedirectAttributes redirectAttributes) {
         try {
-            // Check if user is authenticated
-            if (userDetails == null) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                        "You must be logged in to reject requests. Please log in first.");
-                return "redirect:/dev-login";
-            }
-
             if (reason == null || reason.trim().isEmpty()) {
                 throw new IllegalArgumentException("Rejection reason is required");
             }
