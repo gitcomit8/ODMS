@@ -106,6 +106,84 @@
 
         .table-wrapper {
             overflow-x: auto;
+            overflow-y: visible;
+        }
+
+        #participantTable {
+            position: relative;
+            overflow: visible !important;
+        }
+
+        #participantTable tbody {
+            overflow: visible !important;
+        }
+
+        #participantTable tr {
+            overflow: visible !important;
+        }
+
+        #participantTable td {
+            overflow: visible !important;
+            position: relative;
+        }
+
+        .autocomplete-wrapper {
+            position: relative;
+            display: block;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d1d5db;
+            border-top: none;
+            z-index: 9999 !important;
+            top: 100%;
+            left: 0;
+            right: 0;
+            min-width: 300px;
+            max-height: 250px;
+            overflow-y: auto;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 0 0 8px 8px;
+            margin-top: 1px;
+        }
+
+        .autocomplete-items div {
+            padding: 12px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+            white-space: normal;
+            word-wrap: break-word;
+            display: block !important;
+        }
+
+        .autocomplete-items div:hover {
+            background-color: #f0f4ff;
+        }
+
+        .autocomplete-items div:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-active {
+            background-color: #e8f0fe !important;
+        }
+
+        .autocomplete-items div strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .autocomplete-items div small {
+            display: block;
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-top: 4px;
         }
 
         @media (max-width: 768px) {
@@ -183,8 +261,10 @@
                     <tbody>
                     <tr class="participant-row" th:each="participant, itemStat : *{participants}">
                         <td>
-                            <input class="regNoInput" onblur="fetchStudentDetails(this)"
-                                   required th:field="*{participants[__${itemStat.index}__].regNo}" type="text" placeholder="Reg No"/>
+                            <div class="autocomplete-wrapper">
+                                <input class="regNoInput" oninput="handleAutocomplete(this)" onblur="handleBlur(this)"
+                                       onfocus="handleFocus(this)" required th:field="*{participants[__${itemStat.index}__].regNo}" type="text" placeholder="Reg No"/>
+                            </div>
                         </td>
                         <td><input class="nameInput" readonly th:field="*{participants[__${itemStat.index}__].name}"
                                    type="text" placeholder="Auto-filled"/></td>
@@ -215,6 +295,176 @@
 </div>
 
 <script>
+    let autocompleteTimeout;
+    let currentFocus = -1;
+
+    async function handleAutocomplete(input) {
+        const query = input.value.trim();
+        closeAllLists();
+
+        if (!query) return;
+
+        clearTimeout(autocompleteTimeout);
+        autocompleteTimeout = setTimeout(async () => {
+            await fetchSuggestions(input, query);
+        }, 300); // Debounce for 300ms
+    }
+
+    async function fetchSuggestions(input, query) {
+        try {
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            const response = await fetch(`/api/students/search?query=${encodeURIComponent(query)}`, {
+                method: 'GET',
+                headers: {
+                    [header]: token
+                }
+            });
+
+            if (!response.ok) {
+                console.log('API response not OK:', response.status);
+                return;
+            }
+
+            const suggestions = await response.json();
+            console.log('Suggestions received:', suggestions.length, suggestions);
+            
+            if (suggestions.length === 0) {
+                console.log('No suggestions found for query:', query);
+                return;
+            }
+
+            const wrapper = input.closest('.autocomplete-wrapper');
+            if (!wrapper) {
+                console.error('Autocomplete wrapper not found');
+                return;
+            }
+
+            const listDiv = document.createElement('div');
+            listDiv.setAttribute('class', 'autocomplete-items');
+            listDiv.setAttribute('id', input.id + '-autocomplete-list');
+
+            suggestions.forEach((student, index) => {
+                const itemDiv = document.createElement('div');
+                const regNo = student.regNo;
+                const matchIndex = regNo.toUpperCase().indexOf(query.toUpperCase());
+                
+                let displayRegNo = regNo;
+                if (matchIndex > -1) {
+                    displayRegNo = regNo.substring(0, matchIndex) + 
+                                   '<strong>' + regNo.substring(matchIndex, matchIndex + query.length) + '</strong>' +
+                                   regNo.substring(matchIndex + query.length);
+                }
+
+                itemDiv.innerHTML = displayRegNo + 
+                                    '<small>' + student.name + ' - Year ' + student.year + ' (' + student.branch + ')</small>';
+                
+                itemDiv.style.display = 'block'; // Ensure visibility
+                
+                itemDiv.addEventListener('click', function(e) {
+                    selectStudent(input, student);
+                    closeAllLists();
+                });
+
+                itemDiv.addEventListener('mousedown', function(e) {
+                    e.preventDefault(); // Prevent blur event
+                });
+
+                listDiv.appendChild(itemDiv);
+            });
+
+            wrapper.appendChild(listDiv);
+            console.log('Dropdown created with', suggestions.length, 'items');
+
+        } catch (error) {
+            console.error('Error fetching suggestions:', error);
+        }
+    }
+
+    function selectStudent(input, student) {
+        input.value = student.regNo;
+        const row = input.closest('tr');
+        
+        row.querySelector('.nameInput').value = student.name;
+        row.querySelector('.yearInput').value = student.year;
+        row.querySelector('.branchInput').value = student.branch;
+        
+        // Fetch full details to get section and department
+        fetchStudentDetails(input);
+    }
+
+    function handleFocus(input) {
+        if (input.value.trim()) {
+            handleAutocomplete(input);
+        }
+    }
+
+    function handleBlur(input) {
+        setTimeout(() => {
+            closeAllLists();
+            fetchStudentDetails(input);
+        }, 200);
+    }
+
+    function closeAllLists(element) {
+        const items = document.getElementsByClassName('autocomplete-items');
+        Array.from(items).forEach(item => {
+            if (element !== item && element !== item.previousSibling) {
+                item.parentNode.removeChild(item);
+            }
+        });
+        currentFocus = -1;
+    }
+
+    // Handle keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        const activeInput = document.activeElement;
+        if (!activeInput.classList.contains('regNoInput')) return;
+
+        const wrapper = activeInput.closest('.autocomplete-wrapper');
+        if (!wrapper) return;
+
+        let list = wrapper.querySelector('.autocomplete-items');
+        if (!list) return;
+
+        const items = list.getElementsByTagName('div');
+        
+        if (e.keyCode === 40) { // Down arrow
+            e.preventDefault();
+            currentFocus++;
+            addActive(items);
+        } else if (e.keyCode === 38) { // Up arrow
+            e.preventDefault();
+            currentFocus--;
+            addActive(items);
+        } else if (e.keyCode === 13) { // Enter
+            e.preventDefault();
+            if (currentFocus > -1 && items[currentFocus]) {
+                items[currentFocus].click();
+            }
+        } else if (e.keyCode === 27) { // Escape
+            closeAllLists();
+        }
+    });
+
+    function addActive(items) {
+        if (!items) return false;
+        removeActive(items);
+        
+        if (currentFocus >= items.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = items.length - 1;
+        
+        items[currentFocus].classList.add('autocomplete-active');
+        items[currentFocus].scrollIntoView({ block: 'nearest' });
+    }
+
+    function removeActive(items) {
+        Array.from(items).forEach(item => {
+            item.classList.remove('autocomplete-active');
+        });
+    }
+
     async function fetchStudentDetails(element) {
         const regNo = element.value.trim();
         const row = element.closest('tr');
@@ -260,7 +510,9 @@
 
         newRow.innerHTML = `
         <td>
-            <input type="text" name="participants[${newIndex}].regNo" onblur="fetchStudentDetails(this)" class="regNoInput" placeholder="Reg No" required />
+            <div class="autocomplete-wrapper">
+                <input type="text" name="participants[${newIndex}].regNo" oninput="handleAutocomplete(this)" onblur="handleBlur(this)" onfocus="handleFocus(this)" class="regNoInput" placeholder="Reg No" required />
+            </div>
         </td>
         <td>
             <input type="text" name="participants[${newIndex}].name" class="nameInput" placeholder="Auto-filled" readonly />
@@ -291,6 +543,13 @@
 
         button.closest('tr').remove();
     }
+
+    // Close autocomplete when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('regNoInput')) {
+            closeAllLists();
+        }
+    });
 </script>
 </body>
 </html>
