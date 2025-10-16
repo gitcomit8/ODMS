@@ -2,195 +2,185 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Approver Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/modern-style.css}">
     <style>
         body {
-            font-family: sans-serif;
-            margin: 2em;
-            background-color: #f8f9fa;
+            background: var(--light-bg);
         }
 
-        .container {
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        .dashboard-section {
-            margin-bottom: 40px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
+        .header {
             text-align: center;
-            color: #333;
+            padding: 2rem 0;
+            animation: fadeInDown 0.6s ease-out;
         }
 
-        h2 {
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-            color: #0056b3;
+        .header h1 {
+            font-size: 2.5rem;
         }
 
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
+        .dashboard-icon {
+            font-size: 4rem;
+            animation: bounce 2s ease-in-out infinite;
+            display: block;
+            margin-bottom: 1rem;
         }
 
-        th, td {
-            border: 1px solid #dee2e6;
-            padding: 12px;
-            text-align: left;
+        .dashboard-section h2 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-bottom: 3px solid transparent;
+            border-image: var(--primary-gradient);
+            border-image-slice: 1;
+            padding-bottom: 0.5rem;
         }
 
-        th {
-            background-color: #e9ecef;
-        }
-
-        .actions form {
-            display: inline;
-        }
-
-        .actions button {
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 4px;
-            border: none;
-        }
-
-        .approve-btn {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .reject-btn {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .no-requests {
+        .empty-state {
             text-align: center;
-            color: #6c757d;
+            padding: 2rem;
+            color: var(--text-secondary);
             font-style: italic;
         }
 
-        a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
+        .empty-state-icon {
+            font-size: 4rem;
+            opacity: 0.3;
+            margin-bottom: 0.5rem;
         }
 
-        a:hover {
-            text-decoration: underline;
+        .actions {
+            display: flex;
+            gap: 0.5rem;
         }
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 50%;
-            border-radius: 8px;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        .approve-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
             cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(17, 153, 142, 0.3);
         }
 
-        .close:hover,
-        .close:focus {
-            color: black;
+        .approve-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+        }
+
+        .reject-btn {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(250, 112, 154, 0.3);
+        }
+
+        .reject-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.4);
         }
 
         .modal-buttons {
-            margin-top: 20px;
-            text-align: right;
-        }
-
-        .modal-buttons button {
-            padding: 10px 20px;
-            margin-left: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
         }
 
         .cancel-btn {
-            background-color: #6c757d;
+            background: linear-gradient(135deg, #a8a8a8 0%, #8a8a8a 100%);
             color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
         .submit-reject-btn {
-            background-color: #dc3545;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: sans-serif;
+        .event-link {
+            font-weight: 600;
+            color: #667eea;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .event-link:hover {
+            color: #764ba2;
+        }
+
+        .count-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 50px;
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 700;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Approver Dashboard</h1>
+    <div class="header">
+        <span class="dashboard-icon">✅</span>
+        <h1>Approver Dashboard</h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">Review and manage event requests</p>
+    </div>
 
-    <!-- Success/Error Messages -->
-    <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${successMessage}">
-        <span th:text="${successMessage}"></span>
-        <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
-    </div>
-    <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${errorMessage}">
-        <span th:text="${errorMessage}"></span>
-        <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
-    </div>
+    <div class="message success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="message error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
     <div class="dashboard-section">
-        <h2>Pending My Action</h2>
+        <h2>⏳ Pending My Action</h2>
         <table>
             <thead>
             <tr>
                 <th>Event Name</th>
                 <th>Date(s)</th>
-                <th>Participant Count</th>
+                <th>Participants</th>
                 <th>Actions</th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${pendingMyAction.isEmpty()}">
-                <td class="no-requests" colspan="4">No requests are currently waiting for your approval.</td>
+                <td colspan="4">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <div>No requests are currently waiting for your approval.</div>
+                    </div>
+                </td>
             </tr>
             <tr th:each="request : ${pendingMyAction}">
                 <td>
-                    <a th:href="@{/approver/event-details/{id}(id=${request.id})}" th:text="${request.eventName}"></a>
+                    <a class="event-link" th:href="@{/approver/event-details/{id}(id=${request.id})}" th:text="${request.eventName}"></a>
                 </td>
                 <td th:text="|${#temporals.format(request.startDate, 'dd-MMM')} to ${#temporals.format(request.endDate, 'dd-MMM-yyyy')}|"></td>
-                <td th:text="${request.participants != null ? #lists.size(request.participants) : 0}"></td>
+                <td>
+                    <span class="count-badge" th:text="${request.participants != null ? #lists.size(request.participants) : 0}"></span>
+                </td>
                 <td class="actions">
                     <form method="post" style="display:inline;"
                           th:action="@{/approver/approve/{id}(id=${request.id})}">
@@ -206,7 +196,7 @@
     </div>
 
     <div class="dashboard-section">
-        <h2>In Progress (Awaiting Next Level Approval)</h2>
+        <h2>🔄 In Progress (Awaiting Next Level)</h2>
         <table>
             <thead>
             <tr>
@@ -217,21 +207,28 @@
             </thead>
             <tbody>
             <tr th:if="${inProgress.isEmpty()}">
-                <td class="no-requests" colspan="3">No requests are currently in the pipeline.</td>
+                <td colspan="3">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <div>No requests are currently in the pipeline.</div>
+                    </div>
+                </td>
             </tr>
             <tr th:each="request : ${inProgress}">
                 <td>
-                    <a th:href="@{/approver/event-details/{id}(id=${request.id})}" th:text="${request.eventName}"></a>
+                    <a class="event-link" th:href="@{/approver/event-details/{id}(id=${request.id})}" th:text="${request.eventName}"></a>
                 </td>
                 <td th:text="|${#temporals.format(request.startDate, 'dd-MMM')} to ${#temporals.format(request.endDate, 'dd-MMM-yyyy')}|"></td>
-                <td th:text="${request.status}"></td>
+                <td>
+                    <span class="status" th:classappend="|status-${request.status}|" th:text="${request.status}"></span>
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
 
     <div class="dashboard-section">
-        <h2>Finalized Requests (Recently Approved/Rejected)</h2>
+        <h2>📋 Finalized Requests</h2>
         <table>
             <thead>
             <tr>
@@ -242,14 +239,21 @@
             </thead>
             <tbody>
             <tr th:if="${finalized.isEmpty()}">
-                <td class="no-requests" colspan="3">No recently finalized requests.</td>
+                <td colspan="3">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <div>No recently finalized requests.</div>
+                    </div>
+                </td>
             </tr>
             <tr th:each="request : ${finalized}">
                 <td>
-                    <a th:href="@{/approver/event-details/{id}(id=${request.id})}" th:text="${request.eventName}"></a>
+                    <a class="event-link" th:href="@{/approver/event-details/{id}(id=${request.id})}" th:text="${request.eventName}"></a>
                 </td>
                 <td th:text="|${#temporals.format(request.startDate, 'dd-MMM')} to ${#temporals.format(request.endDate, 'dd-MMM-yyyy')}|"></td>
-                <td th:text="${request.status}"></td>
+                <td>
+                    <span class="status" th:classappend="|status-${request.status}|" th:text="${request.status}"></span>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -263,8 +267,10 @@
         <h2>Reject Request</h2>
         <form id="rejectForm" method="post">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-            <label for="rejectionReason">Please provide a reason for rejection:</label>
-            <textarea id="rejectionReason" name="reason" rows="4" required></textarea>
+            <div class="form-group">
+                <label for="rejectionReason">Please provide a reason for rejection:</label>
+                <textarea id="rejectionReason" name="reason" rows="4" required placeholder="Enter your reason here..."></textarea>
+            </div>
             <div class="modal-buttons">
                 <button class="cancel-btn" type="button" onclick="closeRejectModal()">Cancel</button>
                 <button class="submit-reject-btn" type="submit">Submit Rejection</button>
@@ -287,7 +293,6 @@
         document.getElementById('rejectionReason').value = '';
     }
 
-    // Close modal when clicking outside of it
     window.onclick = function(event) {
         const modal = document.getElementById('rejectModal');
         if (event.target == modal) {

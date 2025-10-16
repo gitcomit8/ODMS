@@ -2,74 +2,156 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard - User Management</title>
+    <link rel="stylesheet" th:href="@{/css/modern-style.css}">
     <style>
         body {
-            font-family: sans-serif;
-            margin: 2em;
+            background: var(--light-bg);
         }
 
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin-top: 20px;
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            animation: fadeInDown 0.6s ease-out;
         }
 
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        th {
-            background-color: #f2f2f2;
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+            animation: fadeIn 0.8s ease-out;
         }
 
-        select, button {
-            padding: 8px;
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-csv {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .action-home {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .action-requests {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .table-container {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        select {
+            margin-right: 0.5rem;
+        }
+
+        button[type="submit"] {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(245, 87, 108, 0.3);
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .user-row {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #2c5282;
         }
     </style>
 </head>
 <body>
-<h1>Admin Dashboard - User Management</h1>
+<div class="container">
+    <div class="header">
+        <h1>👨‍💼 Admin Dashboard</h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">User Role Management</p>
+    </div>
 
-<div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
-    <strong>Quick Actions:</strong>
-    <a href="/admin/import" style="display: inline-block; margin: 0 10px; padding: 8px 15px; background-color: #28a745; color: white; text-decoration: none; border-radius: 4px;">📊 CSV Import</a>
-    <a href="/" style="display: inline-block; margin: 0 10px; padding: 8px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px;">🏠 Home</a>
-    <a href="/event-requests/my-requests" style="display: inline-block; margin: 0 10px; padding: 8px 15px; background-color: #17a2b8; color: white; text-decoration: none; border-radius: 4px;">📋 All Requests</a>
+    <div class="quick-actions">
+        <a href="/admin/import" class="action-btn action-csv">📊 CSV Import</a>
+        <a href="/" class="action-btn action-home">🏠 Home</a>
+        <a href="/event-requests/my-requests" class="action-btn action-requests">📋 All Requests</a>
+    </div>
+
+    <div class="table-container card">
+        <h2>User Management</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>User Email</th>
+                <th>Current Role</th>
+                <th>Change Role</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="user-row" th:each="user : ${users}">
+                <td th:text="${user.email}">user@example.com</td>
+                <td>
+                    <span class="role-badge" th:text="${user.role}">ROLE_STUDENT_ORGANIZER</span>
+                </td>
+                <td>
+                    <form method="post" th:action="@{/admin/update-role}" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input name="userId" th:value="${user.id}" type="hidden"/>
+                        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                        
+                        <select name="role">
+                            <option th:each="role : ${allRoles}"
+                                    th:selected="${role == user.role}"
+                                    th:text="${role}"
+                                    th:value="${role}">
+                            </option>
+                        </select>
+                        <button type="submit">Update</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-
-<table>
-    <thead>
-    <tr>
-        <th>User Email</th>
-        <th>Current Role</th>
-        <th>Change Role</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="user : ${users}">
-        <td th:text="${user.email}">user@example.com</td>
-        <td th:text="${user.role}">ROLE_STUDENT_ORGANIZER</td>
-        <td>
-            <form method="post" th:action="@{/admin/update-role}">
-                <input name="userId" th:value="${user.id}" type="hidden"/>
-                
-                <select name="role">
-                    <option th:each="role : ${allRoles}"
-                            th:selected="${role == user.role}"
-                            th:text="${role}"
-                            th:value="${role}">
-                    </option>
-                </select>
-                <button type="submit">Update</button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
 </body>
 </html>

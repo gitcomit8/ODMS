@@ -5,85 +5,148 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>OD Management System</title>
+    <title>OD Management System - Home</title>
+    <link rel="stylesheet" th:href="@{/css/modern-style.css}">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f4f4f4;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            color: white;
+            -webkit-text-fill-color: white;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .hero-icon {
+            font-size: 5rem;
+            animation: bounce 2s ease-in-out infinite;
+            display: block;
+            margin-bottom: 1rem;
         }
 
         .nav-links {
-            background: #007bff;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            gap: 1rem;
         }
 
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin-right: 15px;
-            padding: 8px 15px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-
-        .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .nav-links h3 {
+            width: 100%;
+            margin: 0 0 1rem 0;
+            -webkit-text-fill-color: initial;
         }
 
         .dev-section {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            border: none;
+            border-left: 4px solid #38a169;
+            color: #22543d;
         }
 
         .dev-section h3 {
-            color: #155724;
-            margin-top: 0;
+            color: #22543d;
+            -webkit-text-fill-color: #22543d;
+        }
+
+        .dev-section a {
+            color: #2f855a;
+            font-weight: 600;
+        }
+
+        .dev-section code {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .info-card h3 {
+            -webkit-text-fill-color: initial;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            padding: 1rem;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .info-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-item strong {
+            display: block;
+            color: #667eea;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1 th:text="${message}">Welcome to OD Management System</h1>
+    <div class="hero">
+        <span class="hero-icon">🎓</span>
+        <h1 th:text="${message}">Welcome to OD Management System</h1>
+    </div>
 
     <div class="nav-links">
-        <h3 style="margin: 0 0 15px 0; color: white;">Navigation</h3>
-        <a href="/login">Login</a>
-        <a href="/h2-console" target="_blank">H2 Database Console</a>
+        <h3>Quick Navigation</h3>
+        <a href="/login" class="btn btn-primary">🔐 Login</a>
+        <a href="/h2-console" target="_blank" class="btn btn-secondary">💾 Database Console</a>
         <div th:if="${devLoginEnabled}">
-            <a href="/dev-login" style="background-color: #28a745;">🔧 Developer Login</a>
+            <a href="/dev-login" class="btn btn-success">🔧 Developer Login</a>
         </div>
     </div>
 
-    <div class="dev-section" th:if="${devLoginEnabled}">
+    <div class="card dev-section" th:if="${devLoginEnabled}">
         <h3>🚀 Developer Dashboard Enabled</h3>
-        <p><strong>Development Mode is Active!</strong> You can test the application functionality using the following:
-        </p>
+        <p><strong>Development Mode is Active!</strong> You can test the application functionality using the following:</p>
         <ul>
-            <li><strong>Developer Login:</strong> <a href="/dev-login">Access the dev login</a> to test different user
-                roles without OTP
-            </li>
+            <li><strong>Developer Login:</strong> <a href="/dev-login">Access the dev login</a> to test different user roles without OTP</li>
             <li><strong>H2 Database Console:</strong> <a href="/h2-console" target="_blank">View and manage database</a>
                 <ul>
                     <li>JDBC URL: <code>jdbc:h2:mem:testdb</code></li>
                     <li>Username: <code>sa</code></li>
-                    <li>Password: (leave empty)</li>
+                    <li>Password: <em>(leave empty)</em></li>
                 </ul>
             </li>
             <li><strong>Available Roles for Testing:</strong>
@@ -99,12 +162,34 @@
         </ul>
     </div>
 
-    <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 5px;">
-        <h3>System Information</h3>
-        <p><strong>Application:</strong> OD Management System (On-Duty Leave Management)</p>
-        <p><strong>Port:</strong> 8080</p>
-        <p><strong>Profile:</strong> Development</p>
-        <p><strong>Database:</strong> H2 In-Memory Database</p>
+    <div class="info-card">
+        <h3>📊 System Information</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <strong>Application</strong>
+                OD Management System
+            </div>
+            <div class="info-item">
+                <strong>Purpose</strong>
+                On-Duty Leave Management
+            </div>
+            <div class="info-item">
+                <strong>Port</strong>
+                8080
+            </div>
+            <div class="info-item">
+                <strong>Profile</strong>
+                Development
+            </div>
+            <div class="info-item">
+                <strong>Database</strong>
+                H2 In-Memory
+            </div>
+            <div class="info-item">
+                <strong>Status</strong>
+                ✅ Running
+            </div>
+        </div>
     </div>
 </div>
 </body>

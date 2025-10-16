@@ -2,17 +2,94 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>Success</title>
-    <style>body {
-        font-family: sans-serif;
-        text-align: center;
-        margin-top: 5em;
-    }</style>
+    <title>Success - Request Submitted</title>
+    <link rel="stylesheet" th:href="@{/css/modern-style.css}">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        .success-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            animation: zoomIn 0.6s ease-out;
+        }
+
+        .success-icon {
+            font-size: 6rem;
+            animation: bounce 2s ease-in-out infinite;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 1rem;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>✅ Request Submitted Successfully!</h1>
-<p><a href="/event-requests/new">Submit another request</a></p>
+<div class="success-container">
+    <span class="success-icon">✅</span>
+    <h1>Request Submitted Successfully!</h1>
+    <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2rem;">
+        Your OD request has been submitted and is now pending approval.
+    </p>
+    <a href="/event-requests/new" class="action-btn">➕ Submit Another Request</a>
+    <br><br>
+    <a href="/event-requests/my-requests" class="action-btn" style="background: var(--success-gradient);">📋 View My Requests</a>
+</div>
 </body>
 </html>

@@ -2,192 +2,142 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Event Details</title>
+    <link rel="stylesheet" th:href="@{/css/modern-style.css}">
     <style>
         body {
-            font-family: sans-serif;
-            margin: 2em;
+            background: var(--light-bg);
         }
 
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-        }
-
-        /* Approval Workflow Styles */
-        .approval-workflow {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-
-        .approval-stage {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            opacity: 0.4;
-        }
-
-        .approval-stage.active {
-            opacity: 1;
-            font-weight: bold;
-        }
-
-        .approval-stage.completed {
-            opacity: 1;
-            color: #28a745;
-        }
-
-        .stage-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #6c757d;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .approval-stage.active .stage-icon {
-            background-color: #ffc107;
-            animation: pulse 2s infinite;
-        }
-
-        .approval-stage.completed .stage-icon {
-            background-color: #28a745;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-        }
-
-        .approval-arrow {
-            font-size: 24px;
-            color: #6c757d;
-            margin: 0 10px;
-        }
-
-        .stage-label {
+        .header {
             text-align: center;
-            font-size: 14px;
+            padding: 2rem 0;
+            animation: fadeInDown 0.6s ease-out;
         }
 
-        /* Timeline Styles */
-        .timeline {
-            position: relative;
-            padding-left: 30px;
+        .event-icon {
+            font-size: 4rem;
+            animation: bounce 2s ease-in-out infinite;
+            display: block;
+            margin-bottom: 1rem;
         }
 
-        .timeline-item {
-            position: relative;
-            padding-bottom: 20px;
-            border-left: 2px solid #e9ecef;
+        .event-info {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
         }
 
-        .timeline-marker {
-            position: absolute;
-            left: -6px;
-            top: 0;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #6c757d;
+        .event-info p {
+            margin: 0.75rem 0;
+            color: #2c5282;
+            font-size: 1.05rem;
         }
 
-        .timeline-content {
-            margin-left: 20px;
+        .event-info strong {
+            color: #667eea;
+            font-weight: 700;
         }
 
-        .timeline-header {
-            font-weight: bold;
-            margin-bottom: 5px;
+        .status-badge-large {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
         }
 
-        .timeline-time {
-            font-size: 12px;
-            margin-bottom: 5px;
+        .back-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 2rem;
         }
 
-        .timeline-comments {
-            margin-top: 8px;
-            padding: 8px;
-            background-color: #f8f9fa;
-            border-left: 3px solid #007bff;
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         }
 
-        .timeline-status-change {
-            margin-top: 5px;
-        }
-
-        h1, h2 {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
+        .participant-count {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            margin: 1rem 0;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Event Details</h1>
-    <h2 th:text="${event.eventName}">Event Name</h2>
-    <p>
-        <strong>Date:</strong> <span th:text="${#temporals.format(event.eventDate, 'dd-MMM-yyyy')}"></span><br>
-        <strong>Time:</strong> <span th:text="${#temporals.format(event.fromTime, 'hh:mm a')}"></span> - <span
-            th:text="${#temporals.format(event.toTime, 'hh:mm a')}"></span><br>
-        <strong>Current Status:</strong> <span th:text="${event.status}"></span>
-    </p>
+    <div class="header">
+        <span class="event-icon">🎯</span>
+        <h1>Event Details</h1>
+    </div>
 
-    <h2>Participant List</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>Registration No</th>
-            <th>Name</th>
-            <th>Branch</th>
-            <th>Section</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="participant : ${participants}">
-            <td th:text="${participant.registrationNumber}"></td>
-            <td th:text="${participant.name}"></td>
-            <td th:text="${participant.branch}"></td>
-            <td th:text="${participant.section}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <br>
-    <a th:href="@{/approver/dashboard}">Back to Dashboard</a>
+    <div class="card">
+        <h2 th:text="${event.eventName}">Event Name</h2>
+        
+        <div class="event-info">
+            <p>
+                <strong>📅 Date:</strong> 
+                <span th:text="${#temporals.format(event.eventDate, 'dd-MMM-yyyy')}"></span>
+            </p>
+            <p>
+                <strong>🕐 Time:</strong> 
+                <span th:text="${#temporals.format(event.fromTime, 'hh:mm a')}"></span> - 
+                <span th:text="${#temporals.format(event.toTime, 'hh:mm a')}"></span>
+            </p>
+            <p>
+                <strong>📊 Current Status:</strong><br>
+                <span class="status status-badge-large" th:classappend="|status-${event.status}|" th:text="${event.status}"></span>
+            </p>
+        </div>
+
+        <h2>👥 Participant List</h2>
+        <span class="participant-count" th:text="${#lists.size(participants)} + ' Participants'">0 Participants</span>
+        
+        <table>
+            <thead>
+            <tr>
+                <th>Registration No</th>
+                <th>Name</th>
+                <th>Branch</th>
+                <th>Section</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${participants.isEmpty()}">
+                <td colspan="4" style="text-align: center; color: var(--text-secondary);">
+                    No participants listed.
+                </td>
+            </tr>
+            <tr th:each="participant : ${participants}">
+                <td th:text="${participant.registrationNumber}"></td>
+                <td><strong th:text="${participant.name}"></strong></td>
+                <td th:text="${participant.branch}"></td>
+                <td th:text="${participant.section}"></td>
+            </tr>
+            </tbody>
+        </table>
+        
+        <div style="text-align: center;">
+            <a th:href="@{/approver/dashboard}" class="back-link">← Back to Dashboard</a>
+        </div>
+    </div>
 </div>
 </body>
 </html>

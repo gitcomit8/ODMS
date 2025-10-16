@@ -2,50 +2,121 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>Error</title>
+    <title>Error - OD Management System</title>
+    <link rel="stylesheet" th:href="@{/css/modern-style.css}">
     <style>
         body {
-            font-family: sans-serif;
-            margin: 2em;
-            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #fa709a, #fee140, #fa709a, #ff6b35);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
         }
+
         .error-container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #dc3545;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 90%;
+            animation: zoomIn 0.6s ease-out;
+            border-left: 8px solid #dc3545;
         }
-        .error-title {
-            color: #dc3545;
-            margin-bottom: 15px;
+
+        .error-icon {
+            font-size: 5rem;
+            text-align: center;
+            animation: shake 0.5s ease-in-out;
+            display: block;
+            margin-bottom: 1rem;
         }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
         .error-message {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-left: 4px solid #e17055;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            color: #744210;
         }
+
+        .tips {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
+
+        .tips ul {
+            margin: 0.5rem 0 0 1.5rem;
+        }
+
+        .tips li {
+            margin: 0.5rem 0;
+            color: #2c5282;
+        }
+
+        .action-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
         .back-link {
-            display: inline-block;
-            background: #007bff;
+            padding: 12px 24px;
+            background: var(--primary-gradient);
             color: white;
-            padding: 10px 20px;
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
+
         .back-link:hover {
-            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .dev-link {
+            background: linear-gradient(135deg, #ffa500, #ff6b35);
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+        }
+
+        .dev-link:hover {
+            box-shadow: 0 6px 20px rgba(255, 165, 0, 0.5);
         }
     </style>
 </head>
 <body>
     <div class="error-container">
-        <h1 class="error-title">⚠️ Application Error</h1>
+        <span class="error-icon">⚠️</span>
+        <h1>Application Error</h1>
         
         <div class="error-message" th:if="${error}">
             <strong>Error Details:</strong><br/>
@@ -57,15 +128,20 @@
             Please check the application logs for more details.
         </div>
         
-        <p>This error information can help developers fix the issue:</p>
-        <ul>
-            <li>Check that all required dependencies are available</li>
-            <li>Verify database connections</li>
-            <li>Check application logs for detailed stack traces</li>
-        </ul>
+        <div class="tips">
+            <p><strong>💡 Troubleshooting Tips:</strong></p>
+            <ul>
+                <li>Check that all required dependencies are available</li>
+                <li>Verify database connections</li>
+                <li>Check application logs for detailed stack traces</li>
+                <li>Contact the system administrator if the issue persists</li>
+            </ul>
+        </div>
         
-        <a href="/" class="back-link">← Back to Home</a>
-        <a href="/dev-login" class="back-link">Dev Login</a>
+        <div class="action-links">
+            <a href="/" class="back-link">🏠 Back to Home</a>
+            <a href="/dev-login" class="back-link dev-link">🔧 Dev Login</a>
+        </div>
     </div>
 </body>
 </html>

@@ -2,132 +2,217 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>New Event OD Request</title>
+    <link rel="stylesheet" th:href="@{/css/modern-style.css}">
     <style>
         body {
-            font-family: sans-serif;
-            margin: 2em;
+            background: var(--light-bg);
         }
 
-        .container {
-            display: grid;
-            gap: 20px;
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+        }
+
+        .form-icon {
+            font-size: 4rem;
+            animation: bounce 2s ease-in-out infinite;
+            display: block;
+            margin-bottom: 1rem;
         }
 
         .event-details {
             display: grid;
-            grid-template-columns: 150px 300px;
-            gap: 10px;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        input, select {
-            padding: 8px;
-            box-sizing: border-box;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: left;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
         }
 
         .actions {
-            margin-top: 10px;
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
         }
 
-        button {
-            padding: 8px 12px;
+        .btn-add {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
             cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-remove {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(250, 112, 154, 0.3);
+        }
+
+        .btn-remove:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.4);
+        }
+
+        .btn-submit {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        input[readonly] {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            cursor: not-allowed;
+        }
+
+        .participant-row {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .event-details {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-<h1>Submit OD Request for an Event</h1>
+<div class="container">
+    <div class="header">
+        <span class="form-icon">📝</span>
+        <h1>Submit OD Request</h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">Create a new event on-duty request</p>
+    </div>
 
-<form action="#" class="container" method="post" th:action="@{/event-requests/submit}" th:object="${eventRequest}">
-    <fieldset>
-        <legend><h3>Event Details</h3></legend>
-        <div class="event-details">
-            <label for="eventName">Event Name:</label>
-            <input id="eventName" required th:field="*{eventName}" type="text">
+    <form action="#" method="post" th:action="@{/event-requests/submit}" th:object="${eventRequest}">
+        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+        
+        <fieldset class="card">
+            <legend><h3>📅 Event Details</h3></legend>
+            <div class="event-details">
+                <div class="form-group">
+                    <label for="eventName">Event Name *</label>
+                    <input id="eventName" required th:field="*{eventName}" type="text" placeholder="Enter event name">
+                </div>
 
-            <label for="startDate">Start Date:</label>
-            <input id="startDate" required th:field="*{startDate}" type="date">
+                <div class="form-group">
+                    <label for="startDate">Start Date *</label>
+                    <input id="startDate" required th:field="*{startDate}" type="date">
+                </div>
 
-            <label for="endDate">End Date:</label>
-            <input id="endDate" required th:field="*{endDate}" type="date">
+                <div class="form-group">
+                    <label for="endDate">End Date *</label>
+                    <input id="endDate" required th:field="*{endDate}" type="date">
+                </div>
 
-            <label for="fromTime">From Time:</label>
-            <input id="fromTime" required th:field="*{fromTime}" type="time">
+                <div class="form-group">
+                    <label for="fromTime">From Time *</label>
+                    <input id="fromTime" required th:field="*{fromTime}" type="time">
+                </div>
 
-            <label for="toTime">To Time:</label>
-            <input id="toTime" required th:field="*{toTime}" type="time">
+                <div class="form-group">
+                    <label for="toTime">To Time *</label>
+                    <input id="toTime" required th:field="*{toTime}" type="time">
+                </div>
 
-            <label for="facultyCoordinator">Faculty Coordinator:</label>
-            <select id="facultyCoordinator" required th:field="*{facultyCoordinator.id}">
-                <option value="">-- Select Faculty Coordinator --</option>
-                <option th:each="faculty : ${allFaculty}"
-                        th:text="${faculty.facultyName + ' (' + faculty.branch + '-' + faculty.section + ')'}"
-                        th:value="${faculty.id}">
-                </option>
-            </select>
-        </div>
-    </fieldset>
+                <div class="form-group">
+                    <label for="facultyCoordinator">Faculty Coordinator *</label>
+                    <select id="facultyCoordinator" required th:field="*{facultyCoordinator.id}">
+                        <option value="">-- Select Faculty --</option>
+                        <option th:each="faculty : ${allFaculty}"
+                                th:text="${faculty.facultyName + ' (' + faculty.branch + '-' + faculty.section + ')'}"
+                                th:value="${faculty.id}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </fieldset>
 
-    <fieldset>
-        <legend><h3>Participants</h3></legend>
-        <table id="participantTable">
-            <thead>
-            <tr>
-                <th>Registration No</th>
-                <th>Full Name</th>
-                <th>Year</th>
-                <th>Branch</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="participant, itemStat : *{participants}">
-                <td>
-                    <input class="regNoInput" onblur="fetchStudentDetails(this)"
-                           required th:field="*{participants[__${itemStat.index}__].regNo}" type="text"/>
-                </td>
-                <td><input class="nameInput" readonly th:field="*{participants[__${itemStat.index}__].name}"
-                           type="text"/></td>
-                <td><input class="yearInput" readonly
-                           th:field="*{participants[__${itemStat.index}__].academicYr}" type="number"/></td>
-                <td><input class="branchInput" readonly th:field="*{participants[__${itemStat.index}__].branch}"
-                           type="text"/></td>
+        <fieldset class="card">
+            <legend><h3>👥 Participants</h3></legend>
+            <div class="table-wrapper">
+                <table id="participantTable">
+                    <thead>
+                    <tr>
+                        <th>Registration No *</th>
+                        <th>Full Name</th>
+                        <th>Year</th>
+                        <th>Branch</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="participant-row" th:each="participant, itemStat : *{participants}">
+                        <td>
+                            <input class="regNoInput" onblur="fetchStudentDetails(this)"
+                                   required th:field="*{participants[__${itemStat.index}__].regNo}" type="text" placeholder="Reg No"/>
+                        </td>
+                        <td><input class="nameInput" readonly th:field="*{participants[__${itemStat.index}__].name}"
+                                   type="text" placeholder="Auto-filled"/></td>
+                        <td><input class="yearInput" readonly
+                                   th:field="*{participants[__${itemStat.index}__].academicYr}" type="number" placeholder="Year"/></td>
+                        <td><input class="branchInput" readonly th:field="*{participants[__${itemStat.index}__].branch}"
+                                   type="text" placeholder="Branch"/></td>
 
-                <input class="sectionInput" th:field="*{participants[__${itemStat.index}__].section}" type="hidden"/>
-                <input class="departmentInput" th:field="*{participants[__${itemStat.index}__].department}"
-                       type="hidden"/>
+                        <input class="sectionInput" th:field="*{participants[__${itemStat.index}__].section}" type="hidden"/>
+                        <input class="departmentInput" th:field="*{participants[__${itemStat.index}__].department}"
+                               type="hidden"/>
 
-                <td>
-                    <button onclick="removeRow(this)" type="button">Remove</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                        <td>
+                            <button class="btn-remove" onclick="removeRow(this)" type="button">Remove</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="actions">
-            <button onclick="addRow()" type="button">Add Participant</button>
-        </div>
-    </fieldset>
+            <div class="actions">
+                <button class="btn-add" onclick="addRow()" type="button">➕ Add Participant</button>
+            </div>
+        </fieldset>
 
-    <button type="submit">Submit Entire Request</button>
-</form>
+        <button class="btn-submit" type="submit">🚀 Submit Request</button>
+    </form>
+</div>
 
 <script>
     async function fetchStudentDetails(element) {
@@ -137,7 +222,6 @@
         if (!regNo) return;
 
         try {
-            // Get CSRF token from meta tags
             const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
             const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
@@ -150,14 +234,12 @@
 
             if (!response.ok) {
                 alert('Student with Registration Number ' + regNo + ' not found!');
-                // Clear the fields if student not found
                 row.querySelectorAll('input:not(.regNoInput)').forEach(input => input.value = '');
                 return;
             }
 
             const student = await response.json();
 
-            // Populate the visible and hidden fields in the same row
             row.querySelector('.nameInput').value = student.name;
             row.querySelector('.yearInput').value = student.academicYear;
             row.querySelector('.branchInput').value = student.branch;
@@ -172,30 +254,29 @@
 
     function addRow() {
         const tableBody = document.getElementById('participantTable').getElementsByTagName('tbody')[0];
-
         const newIndex = tableBody.rows.length;
-
         const newRow = tableBody.insertRow();
+        newRow.className = 'participant-row';
 
         newRow.innerHTML = `
         <td>
-            <input type="text" name="participants[${newIndex}].regNo" onblur="fetchStudentDetails(this)" class="regNoInput" required />
+            <input type="text" name="participants[${newIndex}].regNo" onblur="fetchStudentDetails(this)" class="regNoInput" placeholder="Reg No" required />
         </td>
         <td>
-            <input type="text" name="participants[${newIndex}].name" class="nameInput" readonly />
+            <input type="text" name="participants[${newIndex}].name" class="nameInput" placeholder="Auto-filled" readonly />
         </td>
         <td>
-            <input type="number" name="participants[${newIndex}].academicYr" class="yearInput" readonly />
+            <input type="number" name="participants[${newIndex}].academicYr" class="yearInput" placeholder="Year" readonly />
         </td>
         <td>
-            <input type="text" name="participants[${newIndex}].branch" class="branchInput" readonly />
+            <input type="text" name="participants[${newIndex}].branch" class="branchInput" placeholder="Branch" readonly />
         </td>
 
         <input type="hidden" name="participants[${newIndex}].section" class="sectionInput" />
         <input type="hidden" name="participants[${newIndex}].department" class="departmentInput" />
 
         <td>
-            <button type="button" onclick="removeRow(this)">Remove</button>
+            <button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button>
         </td>
     `;
     }
@@ -205,7 +286,7 @@
 
         if (tableBody.rows.length <= 1) {
             alert("At least one participant is required.");
-            return; // Stop the function here
+            return;
         }
 
         button.closest('tr').remove();

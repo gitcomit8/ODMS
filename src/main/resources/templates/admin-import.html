@@ -2,242 +2,274 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>CSV Data Import</title>
+    <link rel="stylesheet" th:href="@{/css/modern-style.css}">
     <style>
         body {
-            font-family: sans-serif;
-            margin: 2em;
-            background-color: #f8f9fa;
+            background: var(--light-bg);
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+        }
+
+        .import-icon {
+            font-size: 4rem;
+            animation: bounce 2s ease-in-out infinite;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .import-section {
-            background: white;
-            padding: 30px;
-            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .import-section h2 {
+            -webkit-text-fill-color: initial;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .csv-format {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
         }
 
-        .message {
-            padding: 15px;
-            margin-bottom: 20px;
+        .csv-format code {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 2px 6px;
             border-radius: 4px;
-            border: 1px solid;
+            font-weight: 600;
+            color: #667eea;
         }
 
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border-color: #c3e6cb;
+        .checkbox-group {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 12px;
         }
 
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-color: #f5c6cb;
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #744210;
         }
 
-        .info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border-color: #bee5eb;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            cursor: pointer;
         }
 
         input[type="file"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
+            padding: 12px;
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+            cursor: pointer;
+            transition: var(--transition);
         }
 
-        .checkbox-group {
-            margin: 15px 0;
+        input[type="file"]:hover {
+            border-color: #764ba2;
+            background: white;
         }
 
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 8px;
-        }
-
-        button {
-            padding: 12px 24px;
-            background-color: #007bff;
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-gradient);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
-            font-size: 16px;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         }
 
-        .secondary-btn {
-            background-color: #28a745;
+        .submit-btn.faculty {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
         }
 
-        .secondary-btn:hover {
-            background-color: #218838;
+        .submit-btn.faculty:hover {
+            box-shadow: 0 6px 20px rgba(17, 153, 142, 0.5);
         }
 
-        .csv-format {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-            border-left: 4px solid #007bff;
-            margin: 15px 0;
+        .tips-section {
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
         }
 
-        .csv-format code {
-            background-color: #e9ecef;
-            padding: 2px 4px;
-            border-radius: 2px;
-            font-family: monospace;
+        .tips-section ul {
+            margin: 0.5rem 0 0 1.5rem;
         }
 
-        h1 {
-            text-align: center;
-            color: #343a40;
-            margin-bottom: 30px;
-        }
-
-        h2 {
-            color: #495057;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-        }
-
-        .nav-links {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .nav-links a {
-            display: inline-block;
-            margin: 0 15px;
-            padding: 10px 20px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-
-        .nav-links a:hover {
-            background-color: #5a6268;
+        .tips-section li {
+            margin: 0.5rem 0;
+            color: #22543d;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📊 CSV Data Import Center</h1>
+<div class="container">
+    <div class="header">
+        <span class="import-icon">📊</span>
+        <h1>CSV Data Import Center</h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">Bulk import student and faculty data</p>
+    </div>
+    
+    <div class="nav-bar">
+        <a href="/admin/dashboard" class="nav-btn">← Admin Dashboard</a>
+        <a href="/" class="nav-btn">🏠 Home</a>
+    </div>
+
+    <div class="message success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="message error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <!-- Student Data Import Section -->
+    <div class="card import-section">
+        <h2>👨‍🎓 Student Master Data Import</h2>
         
-        <div class="nav-links">
-            <a href="/admin/dashboard">← Admin Dashboard</a>
-            <a href="/">Home</a>
-        </div>
-
-        <div class="message success" th:if="${successMessage}" th:text="${successMessage}"></div>
-        <div class="message error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-
-        <!-- Student Data Import Section -->
-        <div class="import-section">
-            <h2>👨‍🎓 Student Master Data Import</h2>
-            
-            <div class="info">
-                <strong>📋 CSV Format Required:</strong><br>
-                <div class="csv-format">
-                    <strong>Header:</strong> <code>RegistrationNumber,Name,AcademicYear,Branch,Section,Department</code><br>
-                    <strong>Example:</strong> <code>RA2111003010001,John Doe,2024,CSE,A,Computer Science</code>
-                </div>
-            </div>
-
-            <form enctype="multipart/form-data" method="POST" th:action="@{/admin/import/students}">
-                <div class="form-group">
-                    <label for="studentFile">Select Student CSV File:</label>
-                    <input id="studentFile" accept=".csv" name="file" required type="file">
-                </div>
-                
-                <div class="checkbox-group">
-                    <label>
-                        <input type="checkbox" name="clearData" value="true">
-                        Clear existing student data before import
-                    </label>
-                </div>
-                
-                <button type="submit">📥 Import Students</button>
-            </form>
-        </div>
-
-        <!-- Faculty Data Import Section -->
-        <div class="import-section">
-            <h2>👨‍🏫 Faculty Master Data Import</h2>
-            
-            <div class="info">
-                <strong>📋 CSV Format Required:</strong><br>
-                <div class="csv-format">
-                    <strong>Header:</strong> <code>FacultyName,FacultyEmail,Branch,Section</code><br>
-                    <strong>Example:</strong> <code>Dr. Smith Johnson,smith.johnson@university.edu,CSE,A</code>
-                </div>
-            </div>
-
-            <form enctype="multipart/form-data" method="POST" th:action="@{/admin/import/faculty}">
-                <div class="form-group">
-                    <label for="facultyFile">Select Faculty CSV File:</label>
-                    <input id="facultyFile" accept=".csv" name="file" required type="file">
-                </div>
-                
-                <div class="checkbox-group">
-                    <label>
-                        <input type="checkbox" name="clearData" value="true">
-                        Clear existing faculty data before import
-                    </label>
-                </div>
-                
-                <button type="submit" class="secondary-btn">📥 Import Faculty</button>
-            </form>
-        </div>
-
-        <!-- Sample Files Section -->
-        <div class="import-section">
-            <h2>📄 Sample CSV Templates</h2>
-            
-            <p>Download sample CSV files to understand the required format:</p>
-            
+        <div class="info-box">
+            <strong style="color: #667eea; font-size: 1.1rem;">📋 CSV Format Required:</strong>
             <div class="csv-format">
-                <strong>Student Sample CSV:</strong><br>
-                <code>RegistrationNumber,Name,AcademicYear,Branch,Section,Department<br>
-                RA2111003010001,John Doe,2024,CSE,A,Computer Science<br>
-                RA2111003010002,Jane Smith,2024,CSE,A,Computer Science<br>
-                RA2111003010003,Bob Johnson,2024,ECE,B,Electronics</code>
+                <strong>Header:</strong> <code>RegistrationNumber,Name,AcademicYear,Branch,Section,Department</code><br>
+                <strong>Example:</strong> <code>RA2111003010001,John Doe,2024,CSE,A,Computer Science</code>
             </div>
+        </div>
 
-            <div class="csv-format">
-                <strong>Faculty Sample CSV:</strong><br>
-                <code>FacultyName,FacultyEmail,Branch,Section<br>
-                Dr. Smith Johnson,smith.johnson@university.edu,CSE,A<br>
-                Prof. Alice Brown,alice.brown@university.edu,ECE,B<br>
-                Dr. Charlie Wilson,charlie.wilson@university.edu,IT,A</code>
+        <form enctype="multipart/form-data" method="POST" th:action="@{/admin/import/students}">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <div class="form-group">
+                <label for="studentFile">Select Student CSV File</label>
+                <input id="studentFile" accept=".csv" name="file" required type="file">
             </div>
             
-            <p><strong>💡 Tips:</strong></p>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" name="clearData" value="true">
+                    ⚠️ Clear existing student data before import
+                </label>
+            </div>
+            
+            <button type="submit" class="submit-btn">📥 Import Students</button>
+        </form>
+    </div>
+
+    <!-- Faculty Data Import Section -->
+    <div class="card import-section">
+        <h2>👨‍🏫 Faculty Master Data Import</h2>
+        
+        <div class="info-box">
+            <strong style="color: #667eea; font-size: 1.1rem;">📋 CSV Format Required:</strong>
+            <div class="csv-format">
+                <strong>Header:</strong> <code>FacultyName,FacultyEmail,Branch,Section</code><br>
+                <strong>Example:</strong> <code>Dr. Smith Johnson,smith.johnson@university.edu,CSE,A</code>
+            </div>
+        </div>
+
+        <form enctype="multipart/form-data" method="POST" th:action="@{/admin/import/faculty}">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <div class="form-group">
+                <label for="facultyFile">Select Faculty CSV File</label>
+                <input id="facultyFile" accept=".csv" name="file" required type="file">
+            </div>
+            
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" name="clearData" value="true">
+                    ⚠️ Clear existing faculty data before import
+                </label>
+            </div>
+            
+            <button type="submit" class="submit-btn faculty">📥 Import Faculty</button>
+        </form>
+    </div>
+
+    <!-- Sample Files Section -->
+    <div class="card import-section">
+        <h2>📄 Sample CSV Templates</h2>
+        
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Download sample CSV files to understand the required format:
+        </p>
+        
+        <div class="csv-format">
+            <strong style="color: #667eea;">Student Sample CSV:</strong><br>
+            <code>RegistrationNumber,Name,AcademicYear,Branch,Section,Department<br>
+            RA2111003010001,John Doe,2024,CSE,A,Computer Science<br>
+            RA2111003010002,Jane Smith,2024,CSE,A,Computer Science<br>
+            RA2111003010003,Bob Johnson,2024,ECE,B,Electronics</code>
+        </div>
+
+        <div class="csv-format">
+            <strong style="color: #11998e;">Faculty Sample CSV:</strong><br>
+            <code>FacultyName,FacultyEmail,Branch,Section<br>
+            Dr. Smith Johnson,smith.johnson@university.edu,CSE,A<br>
+            Prof. Alice Brown,alice.brown@university.edu,ECE,B<br>
+            Dr. Charlie Wilson,charlie.wilson@university.edu,IT,A</code>
+        </div>
+        
+        <div class="tips-section">
+            <p><strong>💡 Important Tips:</strong></p>
             <ul>
                 <li>Ensure your CSV file has proper headers as shown above</li>
                 <li>Remove any extra spaces around values</li>
@@ -247,5 +279,6 @@
             </ul>
         </div>
     </div>
+</div>
 </body>
 </html>
