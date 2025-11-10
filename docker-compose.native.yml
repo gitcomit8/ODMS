@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  odms-app-native:
+    build:
+      context: .
+      dockerfile: Dockerfile.native
+    image: odms-app:native
+    container_name: odms-app-native
+    ports:
+      - "80:80"
+    environment:
+      # Spring profile for native
+      SPRING_PROFILES_ACTIVE: native
+      
+      # Database configuration - H2 in-memory for fastest startup
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: ""
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.H2Dialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      
+      # Email configuration
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: ayaanmirza788@gmail.com
+      SPRING_MAIL_PASSWORD: ryctzcxdqdxphiyc
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      
+      # Application specific
+      OD_REQUEST_URGENT_REGNO: URGENT-999
+      APP_SECURITY_DEV_LOGIN_ENABLED: "true"
+      
+      # Logging
+      LOGGING_LEVEL_ROOT: WARN
+      LOGGING_LEVEL_IN_SRMUP_ODMS: INFO
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/actuator/health/readiness || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    
+    # Native images use much less memory
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
