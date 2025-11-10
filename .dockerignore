@@ -1,0 +1,46 @@
+# Ignore build artifacts and cache
+target/
+.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# Ignore Git files
+.git
+.gitignore
+.gitattributes
+.github
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+
+# Ignore test and documentation files
+*.md
+*.txt
+*.py
+*.sh
+*.csv
+test_*.py
+automated_test.py
+comprehensive_test.py
+create_test_data.py
+final_test_with_data.py
+sample_*.csv
+
+# Ignore Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Ignore OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  odms-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: odms-app:latest
+    container_name: odms-app
+    ports:
+      - "80:80"
+    environment:
+      # Database configuration - using H2 in-memory for fastest startup
+      # Change to PostgreSQL for production persistence
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: ""
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.H2Dialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      
+      # Application settings for fast startup
+      SPRING_JMX_ENABLED: "false"
+      SPRING_BACKGROUNDPREINITIALIZER_IGNORE: "true"
+      
+      # Logging - minimal for performance
+      LOGGING_LEVEL_ROOT: WARN
+      LOGGING_LEVEL_IN_SRMUP_ODMS: INFO
+      
+      # Email configuration
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: ayaanmirza788@gmail.com
+      SPRING_MAIL_PASSWORD: ryctzcxdqdxphiyc
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      
+      # Application specific
+      OD_REQUEST_URGENT_REGNO: URGENT-999
+      APP_SECURITY_DEV_LOGIN_ENABLED: "true"
+    
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/actuator/health/readiness || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits for predictable performance
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # Uncomment for production PostgreSQL database
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: odms-postgres
+  #   environment:
+  #     POSTGRES_DB: odms_db
+  #     POSTGRES_USER: odms_user
+  #     POSTGRES_PASSWORD: change_this_password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+# volumes:
+#   postgres_data:
